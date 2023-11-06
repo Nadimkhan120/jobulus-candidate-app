@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
@@ -7,14 +8,14 @@ import { icons } from "@/assets/icons";
 import { IconButton } from "@/components";
 import { ScreenHeader } from "@/components/screen-header";
 import { useSoftKeyboardEffect } from "@/hooks";
+import { useRegisterCompany } from "@/services/api/auth/register-company";
 import type { Theme } from "@/theme";
+import { Button, ControlledInput, PressableScale, Screen, Text, View } from "@/ui";
+import { showErrorMessage } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "@shopify/restyle";
 import { Image } from "expo-image";
-import { Button, ControlledInput, PressableScale, Screen, Text, View } from "@/ui";
-import { useRegisterCompany } from "@/services/api/auth/register-company";
-import { showErrorMessage } from "@/utils";
 
 const schema = z.object({
   fullName: z
@@ -31,9 +32,10 @@ const schema = z.object({
     .string({
       required_error: "Password is required",
     })
+    .min(10, "Password should be at least 10 characters")
     .regex(
-      /^(?=.*[0-9])(?=.*\W)(?!.* ).{10,16}$/,
-      "Password must be at least 10 characters and one specail character"
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&]).{10,16}$/,
+      "Password must be at least 10 characters and one specail character, one lower case and one upper case"
     ),
 });
 
@@ -52,6 +54,14 @@ export const Register = () => {
   });
 
   const onSubmit = (data: RegisterFormType) => {
+
+    navigate("VerifyCode", {
+      email: data?.email,
+      password: data?.password,
+    });
+
+    return
+
     registerApi(
       {
         email: data?.email,
@@ -64,18 +74,18 @@ export const Register = () => {
           console.log("data", JSON.stringify(responseData, null, 2));
 
           if (responseData?.response?.status === 200) {
-            navigate("VerifyCode", { email: data?.email, password: data?.password });
+            navigate("VerifyCode", {
+              email: data?.email,
+              password: data?.password,
+            });
           } else {
-            showErrorMessage(responseData.response.message);
+            showErrorMessage(responseData?.response?.message ?? "Something went wrong");
           }
         },
         onError: (error) => {
-          // An error happened!
-          console.log(`rolling back optimistic update with id ${error}`);
+          //@ts-ignore
+          showErrorMessage(error?.response?.data?.message);
         },
-        // onSettled: (data, error, variables, context) => {
-        //   // Error or success... doesn't matter!
-        // },
       }
     );
   };
@@ -92,7 +102,7 @@ export const Register = () => {
             Registration 👍
           </Text>
           <Text variant={"regular14"} paddingTop={"small"} color={"grey100"}>
-            Let’s Register. Apply to jobs!
+            Let's Register. Apply to jobs!
           </Text>
         </View>
 
@@ -143,7 +153,7 @@ export const Register = () => {
         <View paddingVertical={"2xl"} alignSelf={"center"}>
           <PressableScale onPress={() => navigate("RegisterOptions")}>
             <Text variant={"regular14"} color={"grey200"}>
-              Haven’t an account?{" "}
+              Haven't an account?{" "}
               <Text variant={"semiBold14"} color={"primary"}>
                 Register
               </Text>
@@ -161,3 +171,4 @@ const styles = StyleSheet.create({
     width: scale(98),
   },
 });
+

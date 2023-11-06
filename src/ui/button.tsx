@@ -14,7 +14,7 @@ import {
   useRestyle,
 } from "@shopify/restyle";
 import React from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Platform } from "react-native";
 
 import type { Theme } from "@/theme";
 
@@ -65,13 +65,21 @@ export const Button = ({
         {loading ? (
           <ActivityIndicator
             size="small"
-            color={variant === "primary" ? "white" : "primary"}
+            color={variant === "primary" ? "white" : variant === "error" ? "error" : "primary"}
           />
         ) : (
           <Text
             {...buttonTextProps}
-            color={variant === "primary" ? "white" : "primary"}
+            color={variant === "primary" ? "white" : variant === "error" ? "error" : "primary"}
             variant={"medium16"}
+            style={{
+              ...Platform.select({
+                ios: {},
+                android: {
+                  marginTop: 5,
+                },
+              }),
+            }}
           >
             {label}
           </Text>

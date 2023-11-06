@@ -1,19 +1,20 @@
 import React from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "@shopify/restyle";
 import { useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
 import { scale } from "react-native-size-matters";
 import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "@shopify/restyle";
 import StepIndicator from "@/components/indicator-2";
 import { ScreenHeader } from "@/components/screen-header";
 import { useSoftKeyboardEffect } from "@/hooks";
+import { useCompanyInformation } from "@/services/api/auth/company-information";
 import type { Theme } from "@/theme";
 import { Button, ControlledInput, Screen, Text, View } from "@/ui";
 import { DescriptionField } from "@/ui/description-field";
-import { useCompanyInformation } from "@/services/api/auth/company-information";
 import { showErrorMessage } from "@/utils";
+import { setUserCompanyWithRoles } from "@/store/user";
 
 const labels = ["Registration", "Information", "Invite"];
 
@@ -56,9 +57,9 @@ export const CompanyInformation = () => {
       },
       {
         onSuccess: (data) => {
-          console.log("data", JSON.stringify(data, null, 2));
-
           if (data?.response?.status === 200) {
+            //@ts-ignore
+            setUserCompanyWithRoles(data?.response);
             navigate("SendInvite");
           } else {
             showErrorMessage(data.response.message);
@@ -116,7 +117,12 @@ export const CompanyInformation = () => {
             />
           </View>
           <View height={scale(24)} />
-          <Button label="Next" onPress={handleSubmit(onSubmit)} loading={isLoading} />
+          <Button
+            label="Next"
+            //onPress={() => navigate("SendInvite")}
+            onPress={handleSubmit(onSubmit)}
+            loading={isLoading}
+          />
         </View>
       </ScrollView>
     </Screen>

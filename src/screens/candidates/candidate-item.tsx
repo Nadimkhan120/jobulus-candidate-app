@@ -1,53 +1,102 @@
-// CandidateItem.js
+import { Image } from "expo-image";
+import React from "react";
+import { StyleSheet } from "react-native";
+import { scale } from "react-native-size-matters";
 
-import { Image } from 'expo-image';
-import React from 'react';
-import { StyleSheet } from 'react-native';
+import { icons } from "@/assets/icons";
+import { Avatar } from "@/components/avatar";
+import { PressableScale, Text, View } from "@/ui";
 
-import { PressableScale, Text, View } from '@/ui';
+type ApplicantListProps = {
+  data: {
+    full_name: string;
+    is_block: string;
+    bio: string;
+    email: string;
+    phone: string;
+    person_resume_id: string;
+    description: string;
+    cover_pic: string | null;
+    profile_pic: string | null;
+    unique_id: string;
+    expected_salary: string;
+    job_title: string;
+    country: string;
+    city: string;
+  };
 
-export const CandidateItem = ({ item, onPress }) => {
+  onPress: () => void;
+  onOptionPress: () => void;
+  showMore?: boolean;
+};
+
+const CandidateItem = ({
+  data,
+  onPress,
+  onOptionPress,
+  showMore = true,
+}: ApplicantListProps) => {
   return (
-    <PressableScale onPress={() => onPress(item)}>
+    <PressableScale onPress={onPress}>
       <View
-        backgroundColor="white"
-        marginTop={'tiny'}
-        padding="medium"
-        flexDirection={'row'}
+        flexDirection={"row"}
+        paddingHorizontal={"large"}
+        borderBottomColor={"grey400"}
+        borderBottomWidth={StyleSheet.hairlineWidth}
+        backgroundColor={"white"}
+        paddingVertical={"medium"}
       >
-        <View
-          backgroundColor={'grey400'}
-          alignSelf={'center'}
-          width={50}
-          height={50}
-          borderRadius={25}
-        >
-          <Image source={item.profileImage} style={candidateStyles.image} />
+        <View>
+          <Avatar
+            transition={1000}
+            source={{ uri: "https://fakeimg.pl/400x400/cccccc/cccccc" }}
+            placeholder={{ uri: "https://fakeimg.pl/400x400/cccccc/cccccc" }}
+          />
         </View>
-        <View marginLeft={'medium'}>
-          <Text variant="medium20" color="black">
-            {item.name}
+
+        <View flex={1} paddingLeft={"medium"}>
+          <View flexDirection={"row"} alignItems={"center"} justifyContent={"space-between"}>
+            <Text variant={"semiBold14"} color={"black"}>
+              {data?.full_name}
+            </Text>
+            {showMore ? (
+              <PressableScale onPress={() => onOptionPress?.()}>
+                <Image
+                  source={icons["more-horizontal"]}
+                  style={style.dot}
+                  contentFit="contain"
+                />
+              </PressableScale>
+            ) : null}
+          </View>
+
+          <Text
+            variant={"regular13"}
+            textTransform={"capitalize"}
+            marginVertical={"tiny"}
+            color={"grey100"}
+          >
+            {data?.job_title}
           </Text>
-          <Text variant="medium14" color={'grey100'}>
-            {item.title}
+          <Text
+            variant={"regular12"}
+            textTransform={"capitalize"}
+            marginVertical={"tiny"}
+            color={"black"}
+          >
+            {data?.city}, {data?.country}
           </Text>
-          <Text variant="medium13">{item.location}</Text>
         </View>
       </View>
     </PressableScale>
   );
 };
 
-const candidateStyles = StyleSheet.create({
-  image: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 16,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 15,
-    marginTop: 5,
+export default CandidateItem;
+
+const style = StyleSheet.create({
+  dot: {
+    width: scale(24),
+    height: scale(24),
   },
 });

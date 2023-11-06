@@ -6,5 +6,5 @@
  * https://reactnative.dev/docs/security#storing-sensitive-info
  */
 export default {
-  API_URL: "https://jobulusapi.t6ve.com/public/api/",
+  API_URL: 'https://jobulusapi.t6ve.com/public/api/',
 };

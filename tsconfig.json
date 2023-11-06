@@ -1,23 +1,19 @@
+// prettier-ignore
 {
-  "extends": "expo/tsconfig.base",
-  "compilerOptions": {
-    "strict": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@env": ["./src/env.js"]
-    },
-    "esModuleInterop": true,
-    "checkJs": true
-  },
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "docs",
-    "cli",
-    "android",
-    "ios",
-    "lint-staged.config.js"
-  ]
+  "extends": "@tsconfig/react-native/tsconfig.json",     /* Recommended React Native TSConfig base */
+ "compilerOptions": {
+   "jsx": "react",
+   /* Visit https://aka.ms/tsconfig.json to read more about this file */
+
+     "baseUrl": ".",
+     "paths": {
+       "@/*": ["./src/*"],
+     },
+   /* Completeness */
+   "skipLibCheck": true,
+   "strict": false,
+   "esModuleInterop": true,
+   "moduleResolution": "Node",
+   "forceConsistentCasingInFileNames":true                                 /* Skip type checking all .d.ts files. */
+ }
 }

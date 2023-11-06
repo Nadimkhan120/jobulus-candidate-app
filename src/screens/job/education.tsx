@@ -1,22 +1,26 @@
 import React from 'react';
 import { scale } from 'react-native-size-matters';
 
+import type { CandidateProfile } from '@/services/api/candidate';
 import { Text, View } from '@/ui';
 
-import { educationData } from '../candidates/data';
 import { EducationItem } from './education-list';
 
-const skills = [
-  { name: 'Industry Knowldge' },
-  { name: 'Interpersonal Skills' },
-  { name: 'Language' },
-];
+// const skills = [
+//   { name: 'Industry Knowldge' },
+//   { name: 'Interpersonal Skills' },
+//   { name: 'Language' },
+// ];
 
-const Education = () => {
+type EducationProps = {
+  data: CandidateProfile;
+};
+
+const Education = ({ data }: EducationProps) => {
   return (
     <>
       <View>
-        {educationData?.map((item, index) => {
+        {data?.education?.map((item, index) => {
           return <EducationItem key={index} item={item} />;
         })}
       </View>
@@ -26,7 +30,7 @@ const Education = () => {
         </Text>
 
         <View flexDirection={'row'} rowGap={'small'} flexWrap={'wrap'}>
-          {skills?.map((element, index) => {
+          {data?.skills?.map((element, index) => {
             return (
               <View
                 key={index}
@@ -50,4 +54,5 @@ const Education = () => {
     </>
   );
 };
+
 export default Education;

@@ -1,30 +1,17 @@
-import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
-import { scale } from 'react-native-size-matters';
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
+import { scale } from "react-native-size-matters";
+import { palette } from "@/theme";
+import { Text, View } from "@/ui";
 
-import { palette } from '@/theme';
-import { Text, View } from '@/ui';
-
-const data = [
-  { label: 'Item 1', value: '1' },
-  { label: 'Item 2', value: '2' },
-  { label: 'Item 3', value: '3' },
-  { label: 'Item 4', value: '4' },
-  { label: 'Item 5', value: '5' },
-  { label: 'Item 6', value: '6' },
-  { label: 'Item 7', value: '7' },
-  { label: 'Item 8', value: '8' },
-];
-
-const SelectionBox = ({ placeholder, label }: any) => {
-  const [value, setValue] = useState<string | null>(null);
+const SelectionBox = ({ placeholder, label, data, onChange }: any) => {
   const [isFocus, setIsFocus] = useState(false);
 
   return (
     <>
       {label && (
-        <Text paddingVertical={'small'} variant="medium14" color={'black'}>
+        <Text paddingVertical={"small"} variant="medium14" color={"black"}>
           {label}
         </Text>
       )}
@@ -35,17 +22,22 @@ const SelectionBox = ({ placeholder, label }: any) => {
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
           iconStyle={styles.iconStyle}
-          data={data}
+          itemTextStyle={{ color: palette.black }}
+          data={data ?? []}
           maxHeight={300}
-          labelField="label"
-          valueField="value"
+          //@ts-ignore
+          labelField="name"
+          //@ts-ignore
+          valueField="id"
           dropdownPosition="auto"
-          placeholder={!isFocus ? placeholder : '...'}
-          value={value}
+          placeholder={!isFocus ? placeholder : "..."}
+          //value={value}
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={(item) => {
-            setValue(item.value);
+            //@ts-ignore
+
+            onChange?.(item);
             setIsFocus(false);
           }}
         />
@@ -72,8 +64,8 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   label: {
-    position: 'absolute',
-    backgroundColor: 'white',
+    position: "absolute",
+    backgroundColor: "white",
     left: 22,
     top: 8,
     zIndex: 999,
@@ -82,10 +74,11 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 16,
-    color: '#8C8C8C',
+    color: "#8C8C8C",
   },
   selectedTextStyle: {
     fontSize: 16,
+    color: palette.black,
   },
   iconStyle: {
     width: 20,

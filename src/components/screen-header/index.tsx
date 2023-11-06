@@ -12,12 +12,14 @@ type ScreenHeaderProps = {
   icon?: IconTypes;
   title?: string;
   showBorder?: boolean;
+  rightElement?: React.ReactElement;
 };
 
 export const ScreenHeader = ({
   icon,
   title,
   showBorder,
+  rightElement,
 }: ScreenHeaderProps) => {
   const { goBack } = useNavigation();
 
@@ -29,18 +31,23 @@ export const ScreenHeader = ({
       paddingHorizontal={'large'}
       borderBottomColor={'grey500'}
       borderBottomWidth={showBorder ? 1 : 0}
+      justifyContent={'space-between'}
     >
-      <PressableScale onPress={goBack}>
-        <Image
-          source={icons[icon] ?? icons['arrow-left']}
-          style={styles.image}
-          contentFit="contain"
-        />
-      </PressableScale>
+      <View flexDirection={'row'} alignItems={'center'}>
+        <PressableScale onPress={goBack}>
+          <Image
+            source={icons[icon] ?? icons['arrow-left']}
+            style={styles.image}
+            contentFit="contain"
+          />
+        </PressableScale>
 
-      <Text variant={'medium17'} color={'grey100'} paddingLeft={'large'}>
-        {title}
-      </Text>
+        <Text variant={'medium17'} color={'grey100'} paddingLeft={'large'}>
+          {title}
+        </Text>
+      </View>
+
+      {rightElement}
     </View>
   );
 };

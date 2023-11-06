@@ -1,15 +1,17 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as React from "react";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as React from 'react';
 
 import {
   AgencyInformation,
   CompanyInformation,
+  ForgotPassword,
   Login,
   Register,
   RegisterOptions,
+  ResetPassword,
   SendInvite,
   VerifyCode,
-} from "@/screens";
+} from '@/screens';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -19,6 +21,8 @@ export type AuthStackParamList = {
   CompanyInformation: undefined;
   SendInvite: undefined;
   AgencyInformation: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: { email: string; token: string };
 };
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
@@ -51,6 +55,20 @@ export const AuthNavigator = () => {
       <Stack.Screen
         name="VerifyCode"
         component={VerifyCode}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ResetPassword"
+        component={ResetPassword}
         options={{
           headerShown: false,
         }}

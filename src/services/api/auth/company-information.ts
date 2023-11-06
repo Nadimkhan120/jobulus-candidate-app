@@ -1,6 +1,7 @@
-import { createMutation } from "react-query-kit";
-import type { AxiosError } from "axios";
-import { NetWorkService } from "@/services/apinetworkservice";
+import type { AxiosError } from 'axios';
+import { createMutation } from 'react-query-kit';
+
+import { NetWorkService } from '@/services/apinetworkservice';
 
 type Variables = {
   company_name: string;
@@ -17,10 +18,14 @@ type Response = {
   };
 };
 
-export const useCompanyInformation = createMutation<Response, Variables, AxiosError>({
+export const useCompanyInformation = createMutation<
+  Response,
+  Variables,
+  AxiosError
+>({
   mutationFn: async (variables) =>
     NetWorkService.Post({
-      url: "applicant/company/registration",
+      url: 'applicant/company/registration',
       body: variables,
     }).then((response) => {
       // @ts-ignore

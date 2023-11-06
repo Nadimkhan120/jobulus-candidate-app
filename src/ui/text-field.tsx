@@ -4,8 +4,9 @@ import * as React from "react";
 import type { TextInput, TextInputProps } from "react-native";
 import { StyleSheet, TextInput as NTextInput } from "react-native";
 import { scale } from "react-native-size-matters";
+
 import { icons } from "@/assets/icons";
-import type { Theme } from "@/theme";
+import { palette, type Theme } from "@/theme";
 import { PressableScale, Text, View } from "@/ui";
 
 export interface NInputProps extends TextInputProps {
@@ -85,6 +86,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: scale(8),
     paddingRight: scale(4),
+    color: palette.black,
   },
   icon: { height: 24, width: 24 },
 });

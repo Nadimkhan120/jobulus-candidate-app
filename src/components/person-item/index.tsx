@@ -1,67 +1,91 @@
-import { Image } from 'expo-image';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { scale } from 'react-native-size-matters';
-
+import { useNavigation } from '@react-navigation/native';
+import { Image } from 'expo-image';
 import { icons } from '@/assets/icons';
-import { Tag } from '@/components/tag';
+import type { Candidate } from '@/services/api/candidate';
 import { PressableScale, Text, View } from '@/ui';
 
-import { Avatar } from '../avatar';
+type PersonItemProps = {
+  data?: any;
+};
 
-export const PersonItem = ({
-  title,
-  avatar,
-  tags,
-  appliedFor,
-  appliedOn,
-}: any) => {
+export const PersonItem = ({ data }: PersonItemProps) => {
+  const navigation = useNavigation();
+
   return (
-    <View flexDirection={'row'} marginBottom={'large'}>
-      <View>
-        <Avatar source={icons[avatar]} />
-      </View>
-      <View flex={1} paddingHorizontal={'medium'}>
-        <Text variant={'semiBold14'} color={'black'}>
-          {title}
-        </Text>
-        <View flexDirection={'row'} marginTop={'tiny'} alignItems={'center'}>
-          <Text variant={'regular13'} color={'grey300'}>
-            Applied For:{' '}
+    <PressableScale
+      onPress={() => {
+        navigation?.navigate('Job', { id: data?.unique_id });
+      }}
+    >
+      <View
+        flexDirection={'row'}
+        marginBottom={'large'}
+        paddingHorizontal={'large'}
+      >
+        <View>
+          <Image
+            source={{ uri: 'https://fakeimg.pl/400x400/cccccc/cccccc' }}
+            placeholder={{ uri: 'https://fakeimg.pl/400x400/cccccc/cccccc' }}
+            transition={1000}
+            style={{
+              height: scale(72),
+              width: scale(72),
+              borderRadius: 8,
+            }}
+          />
+        </View>
+        <View flex={1} paddingHorizontal={'medium'}>
+          <Text variant={'medium16'} color={'black'}>
+            Sr. UI/UX Designer
           </Text>
-          <Text variant={'regular13'} color={'grey100'}>
-            {appliedFor}
-          </Text>
+          <View flexDirection={'row'} alignItems={'center'}>
+            <Text variant={'medium12'} color={'grey100'}>
+              Tripadvisor,
+            </Text>
+            <Text variant={'regular12'} color={'grey300'}>
+              in California
+            </Text>
+          </View>
+
+          <View
+            flexDirection={'row'}
+            gap={'medium'}
+            alignItems={'center'}
+            paddingTop={'small'}
+          >
+            {['React', 'Laravel', 'MangoDb'].map((item, index) => {
+              return (
+                <View
+                  key={index}
+                  backgroundColor={'grey500'}
+                  borderRadius={scale(4)}
+                  height={scale(31)}
+                  paddingHorizontal={'medium'}
+                  justifyContent={'center'}
+                  alignItems={'center'}
+                  flexDirection={'row'}
+                >
+                  <Text variant={'regular13'} color={'grey100'}>
+                    {item}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
         </View>
 
-        <View flexDirection={'row'} marginTop={'tiny'} alignItems={'center'}>
-          <Text variant={'regular13'} color={'grey300'}>
-            Applied on:{' '}
-          </Text>
-          <Text variant={'regular13'} color={'grey100'}>
-            {appliedOn}
-          </Text>
-        </View>
-        <View
-          flexDirection={'row'}
-          gap={'medium'}
-          alignItems={'center'}
-          paddingTop={'small'}
-        >
-          {tags.map((item, index) => {
-            return <Tag key={index} name={item} icon="cv" />;
-          })}
-        </View>
+        <PressableScale>
+          <Image
+            source={icons['star']}
+            contentFit="contain"
+            style={styles.image}
+          />
+        </PressableScale>
       </View>
-
-      <PressableScale>
-        <Image
-          source={icons['more-horizontal']}
-          contentFit="contain"
-          style={styles.image}
-        />
-      </PressableScale>
-    </View>
+    </PressableScale>
   );
 };
 

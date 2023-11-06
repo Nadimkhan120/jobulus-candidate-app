@@ -1,10 +1,8 @@
-import * as React from 'react';
-import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { Text } from '@/ui';
-
-import TabBarIcon from './tab-icon';
+import * as React from "react";
+import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Text } from "@/ui";
+import TabBarIcon from "./tab-icon";
 
 export function AppBottomTab({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets();
@@ -24,13 +22,13 @@ export function AppBottomTab({ state, descriptors, navigation }: any) {
 
         const onPress = () => {
           const event = navigation.emit({
-            type: 'tabPress',
+            type: "tabPress",
             target: route.key,
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            if (route?.name === 'AddPost') {
-              navigation.navigate('Postjob');
+            if (route?.name === "AddPost") {
+              navigation.navigate("Postjob");
             } else {
               navigation.navigate(route.name);
             }
@@ -39,7 +37,7 @@ export function AppBottomTab({ state, descriptors, navigation }: any) {
 
         const onLongPress = () => {
           navigation.emit({
-            type: 'tabLongPress',
+            type: "tabLongPress",
             target: route.key,
           });
         };
@@ -57,7 +55,7 @@ export function AppBottomTab({ state, descriptors, navigation }: any) {
           >
             <View style={styles.tabStyle}>
               <TabBarIcon name={label.toLowerCase()} focused={isFocused} />
-              <Text variant={'regular12'} fontWeight={'400'}>
+              <Text variant={"regular12"} fontWeight={"400"}>
                 {label}
               </Text>
             </View>
@@ -70,12 +68,12 @@ export function AppBottomTab({ state, descriptors, navigation }: any) {
 
 const styles = StyleSheet.create({
   mainTabContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingTop: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -83,23 +81,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
+    borderTopColor: "#EDEDEE", //palette.grey100,
+    borderTopWidth: StyleSheet.hairlineWidth * 3,
   },
   tabStyle: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginHorizontal: 1,
   },
   labelStyle: {
     fontSize: 11,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     marginTop: 5,
   },
   focusedLabelStyle: {
     fontSize: 11,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     marginTop: 5,
   },
 });

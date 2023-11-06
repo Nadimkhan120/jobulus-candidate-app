@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { icons } from '@/assets/icons';
 import type { AvatarProps } from '@/components/avatar';
 import { Avatar } from '@/components/avatar';
 import { View } from '@/ui';
@@ -21,7 +20,12 @@ export const AvatarGroup = ({ data, ...rest }) => {
               zIndex: index,
             }}
           >
-            <Avatar source={icons[item.icon]} size="small" {...rest} />
+            <Avatar
+              size="small"
+              {...rest}
+              source={{ uri: 'https://fakeimg.pl/400x400/cccccc/cccccc' }}
+              placeholder={{ uri: 'https://fakeimg.pl/400x400/cccccc/cccccc' }}
+            />
           </View>
         );
       })}

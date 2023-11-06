@@ -3,29 +3,29 @@ import type {
   BackgroundColorProps,
   BackgroundColorShorthandProps,
   LayoutProps,
-} from '@shopify/restyle';
+} from "@shopify/restyle";
 import {
   backgroundColor,
   backgroundColorShorthand,
   composeRestyleFunctions,
   layout,
   useRestyle,
-} from '@shopify/restyle';
-import { createRestyleFunction, createText } from '@shopify/restyle';
-import type { ComponentProps } from 'react';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@shopify/restyle";
+import { createRestyleFunction, createText } from "@shopify/restyle";
+import type { ComponentProps } from "react";
+import React from "react";
+import { useTranslation } from "react-i18next";
 
-import type { TxKeyPath } from '@/i18n/utils';
-import type { Theme } from '@/theme';
+import type { TxKeyPath } from "@/i18n/utils";
+import type { Theme } from "@/theme";
 
 export const SText = createText<Theme>();
 
 export const fontSize = createRestyleFunction({
-  property: 'fontSize',
-  styleProperty: 'fontSize',
+  property: "fontSize",
+  styleProperty: "fontSize",
   transform: ({ theme, value }) => {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       return theme.fontSize[value];
     }
     return value;
@@ -33,17 +33,14 @@ export const fontSize = createRestyleFunction({
 });
 
 export const fontFamily2 = createRestyleFunction({
-  property: 'fontFamily',
-  styleProperty: 'fontFamily',
+  property: "fontFamily",
+  styleProperty: "fontFamily",
   transform: ({ theme, value }) => {
     return theme.fontFamily[value] || value;
   },
 });
 
-export type TextProps = Omit<
-  ComponentProps<typeof SText>,
-  'fontSize' | 'fontFamily'
-> & {
+export type TextProps = Omit<ComponentProps<typeof SText>, "fontSize" | "fontFamily"> & {
   isTruncated?: boolean;
   /**
    * Text which is looked up via i18n.
@@ -80,7 +77,7 @@ export const Text = (props: TextProps) => {
     txOptions,
     text,
     children,
-    variant = 'medium14',
+    variant = "medium14",
     isTruncated,
     style,
     fontFamily,
@@ -90,19 +87,18 @@ export const Text = (props: TextProps) => {
   // @ts-ignore
   const i18nText = tx && t(tx as any, txOptions);
 
-  const content =
-    i18nText || (typeof text === 'number' ? String(text) : text) || children;
+  const content = i18nText || (typeof text === "number" ? String(text) : text) || children;
   // @ts-ignore
   const { style: restyled } = useRestyle(restyleFunc as any, rest);
 
   return (
     <SText
       variant={variant}
-      ellipsizeMode={isTruncated ? 'tail' : undefined}
+      ellipsizeMode={isTruncated ? "tail" : undefined}
       fontFamily={fontFamily}
       color={color}
       style={[
-        isTruncated ? { flexShrink: 1, flexWrap: 'wrap' } : {},
+        isTruncated ? { flexShrink: 1, flexWrap: "wrap" } : {},
         // @ts-ignore
         restyled[0],
         style,

@@ -1,74 +1,87 @@
-import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { BottomSheetFooter, BottomSheetView } from '@gorhom/bottom-sheet';
-import { useTheme } from '@shopify/restyle';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { scale } from 'react-native-size-matters';
-
-import { BottomModal } from '@/components/bottom-modal';
-import SelectionBox from '@/components/drop-down';
-import { ScreenHeader } from '@/components/screen-header';
-import { ScrollMenu } from '@/components/scroll-menu';
-import { SearchField } from '@/components/search-field';
-import { data } from '@/constants/applicant-list';
-import type { Theme } from '@/theme';
-import { Button, Screen, Text, View } from '@/ui';
-
-import { UserItem } from './user-item';
-
-const menu = ['All', 'Recent', 'Step1', 'Step2', 'Hired'];
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetFooter, BottomSheetView } from "@gorhom/bottom-sheet";
+import { useNavigation } from "@react-navigation/native";
+import { FlashList } from "@shopify/flash-list";
+import { useTheme } from "@shopify/restyle";
+import { Image } from "expo-image";
+import { StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { scale } from "react-native-size-matters";
+import { ImageButton } from "@/components";
+import ActivityIndicator from "@/components/activity-indicator";
+import { AddButton } from "@/components/add-button";
+import { BottomModal } from "@/components/bottom-modal";
+import { ScreenHeader } from "@/components/screen-header";
+import { SearchField } from "@/components/search-field";
+import { Status } from "@/components/status-info";
+import type { User } from "@/services/api/user";
+import { useGetUser } from "@/services/api/user";
+import { useUser } from "@/store/user";
+import type { Theme } from "@/theme";
+import { Button, Screen, Text, View } from "@/ui";
+import { UserItem } from "./user-item";
 
 export const Users = () => {
   const { colors } = useTheme<Theme>();
-
   const { bottom } = useSafeAreaInsets();
+  const { navigate } = useNavigation();
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const company = useUser((state) => state?.company);
+  const [selectUser, setSelectUser] = useState<User | null>(null);
+
+  const { data, isLoading } = useGetUser({
+    variables: {
+      id: company?.id,
+    },
+  });
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
   // variables
-  const snapPoints = useMemo(() => ['85%'], []);
+  const snapPoints = useMemo(() => ["60%"], []);
 
   // callbacks
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
 
-  console.log('handlePresentModalPress', handlePresentModalPress);
-
   // callbacks
   const handleDismissModalPress = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
   }, []);
 
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('index', index);
-  }, []);
-
-  const renderItem = ({ item }: any) => (
-    <UserItem
-      onPress={() => null}
-      showStatus={true}
-      data={item}
-      onOptionPress={() => null}
-    />
+  const renderItem = useCallback(
+    ({ item }) => {
+      return (
+        <UserItem
+          data={item}
+          onOptionPress={(user) => {
+            setSelectUser(user);
+            handlePresentModalPress();
+          }}
+        />
+      );
+    },
+    [data, bottomSheetModalRef, selectUser, setSelectUser]
   );
 
   // renders
   const renderFooter = useCallback(
     (props) => (
       <BottomSheetFooter {...props} bottomInset={bottom}>
-        <View
-          paddingVertical={'large'}
-          borderTopWidth={1}
-          borderTopColor={'grey400'}
-        >
+        <View paddingVertical={"large"}>
           <Button
-            marginHorizontal={'large'}
-            label="Show Results"
+            marginHorizontal={"large"}
+            label="Edit User "
             onPress={handleDismissModalPress}
+            variant={"outline"}
+          />
+          <Button
+            marginHorizontal={"large"}
+            label="Delete "
+            onPress={handleDismissModalPress}
+            marginTop={"small"}
+            variant={"error"}
           />
         </View>
       </BottomSheetFooter>
@@ -77,59 +90,81 @@ export const Users = () => {
   );
 
   return (
-    <Screen backgroundColor={colors.white} edges={['top']}>
-      <ScreenHeader />
+    <Screen backgroundColor={colors.white} edges={["top"]}>
+      <ScreenHeader
+        title="Users"
+        rightElement={<AddButton label="User" onPress={() => navigate("AddUser")} />}
+      />
 
       <View
-        backgroundColor={'grey500'}
-        paddingVertical={'large'}
-        flexDirection={'row'}
-        alignItems={'center'}
-        paddingHorizontal={'large'}
-        columnGap={'medium'}
+        backgroundColor={"grey500"}
+        paddingVertical={"large"}
+        // flexDirection={"row"}
+        //   alignItems={"center"}
+        paddingHorizontal={"large"}
+        //columnGap={"medium"}
+        paddingBottom={"medium"}
       >
         <SearchField placeholder="Search by name" showBorder={true} />
       </View>
 
-      <ScrollMenu
-        selectedIndex={selectedIndex}
-        data={menu}
-        onChangeMenu={(index) => {
-          setSelectedIndex(index);
-        }}
-      />
-
-      <View height={scale(10)} backgroundColor={'grey500'} />
-      <View flex={1} backgroundColor={'grey500'}>
-        <FlatList
-          data={data}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderItem}
-        />
-      </View>
+      {isLoading ? (
+        <View flex={1} height={scale(300)} justifyContent={"center"} alignItems={"center"}>
+          <ActivityIndicator size={"large"} />
+        </View>
+      ) : (
+        <View flex={1} backgroundColor={"grey500"}>
+          <FlashList
+            //@ts-ignore
+            data={data}
+            renderItem={renderItem}
+            estimatedItemSize={150}
+            ListEmptyComponent={
+              <View height={scale(300)} justifyContent={"center"} alignItems={"center"}>
+                <Text>No Users Found</Text>
+              </View>
+            }
+          />
+        </View>
+      )}
 
       <BottomModal
         ref={bottomSheetModalRef}
         index={0}
         snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backgroundStyle={{ backgroundColor: 'rgb(250,250,253)' }}
+        backgroundStyle={{ backgroundColor: "rgb(250,250,253)" }}
         footerComponent={renderFooter}
       >
         <BottomSheetView style={styles.contentContainer}>
-          <View alignSelf={'center'} paddingVertical={'large'}>
-            <Text variant={'medium17'} color={'black'}>
-              Set Filters
+          <View flexDirection={"row"} justifyContent={"space-between"} alignItems={"center"}>
+            <ImageButton icon="close" onPress={handleDismissModalPress} size={scale(16)} />
+            <Status status={selectUser?.isactive === "0" ? "Pending" : "Active"} />
+          </View>
+          <View alignItems={"center"} justifyContent={"center"} paddingVertical={"medium"}>
+            <Image
+              transition={1000}
+              source={{ uri: "https://fakeimg.pl/400x400/cccccc/cccccc" }}
+              placeholder={{ uri: "https://fakeimg.pl/400x400/cccccc/cccccc" }}
+              style={styles.image}
+              contentFit="contain"
+            />
+          </View>
+          <View
+            gap={"tiny"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            paddingVertical={"medium"}
+          >
+            <Text variant={"medium24"} textTransform={"capitalize"} color={"black"}>
+              {selectUser?.person_name}
+            </Text>
+            <Text variant={"regular13"} color={"grey200"}>
+              {selectUser?.email}
+            </Text>
+            <Text variant={"regular13"} color={"black"}>
+              {selectUser?.role}
             </Text>
           </View>
-
-          <SelectionBox label="Industry" placeholder="Select industry" />
-          <SelectionBox label="Categories" placeholder="Select categories" />
-          <SelectionBox
-            label="Applied on last job"
-            placeholder="Select last job"
-          />
-          <SelectionBox label="Last job status" placeholder="Select status" />
         </BottomSheetView>
       </BottomModal>
     </Screen>
@@ -139,5 +174,10 @@ export const Users = () => {
 const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: scale(16),
+  },
+  image: {
+    height: scale(106),
+    width: scale(106),
+    borderRadius: scale(53),
   },
 });

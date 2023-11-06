@@ -3,33 +3,27 @@ import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@shopify/restyle';
-import React, { useCallback, useMemo, useRef } from 'react';
+import { format } from 'date-fns';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, StyleSheet } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import { scale } from 'react-native-size-matters';
 import * as z from 'zod';
-
 import { BottomModal } from '@/components/bottom-modal';
+import SelectionBox from '@/components/drop-down';
 import StepIndicator from '@/components/indicator-2';
 import { ScreenHeader } from '@/components/screen-header';
 import { SelectModalItem } from '@/components/select-modal-item';
 import { SelectOptionButton } from '@/components/select-option-button';
 import { useSoftKeyboardEffect } from '@/hooks';
+import { useCompanies } from '@/services/api/company';
+import { useJobCategories } from '@/services/api/settings';
+import { setPostCompany, setPostJobStep2 } from '@/store/post-job';
 import type { Theme } from '@/theme';
-import { Button, ControlledInput, Screen, View } from '@/ui';
+import { Button, ControlledInput, Screen, Text, View } from '@/ui';
 
-const labels = ['Job Detail', 'Post Detail', 'Preview', 'Payment'];
-
-const data2 = [
-  {
-    icon: 'company',
-    title: 'Job fair',
-  },
-  {
-    icon: 'company',
-    title: 'Skymind',
-  },
-];
+const labels = ['Job Detail', 'Post Description', 'Post Detail', 'Preview'];
 
 const schema = z.object({
   company: z.string({
@@ -38,8 +32,8 @@ const schema = z.object({
   location: z.string({
     required_error: 'Job location is required',
   }),
-  workSpace: z.string({
-    required_error: 'Workspace type is required',
+  jobCategory: z.string({
+    required_error: 'Job category is required',
   }),
   date: z.string({
     required_error: 'Date  is required',
@@ -55,9 +49,11 @@ export const PostJobDetail = () => {
   useSoftKeyboardEffect();
 
   const {
+    handleSubmit,
     control,
     setValue,
     watch,
+    setError,
     formState: { errors },
   } = useForm<PostJobDetailFormType>({
     resolver: zodResolver(schema),
@@ -66,9 +62,15 @@ export const PostJobDetail = () => {
   const watchCompany = watch('company');
   const watchDate = watch('date');
 
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
+
+  const { data: companies } = useCompanies();
+  const { data: jobCategores } = useJobCategories();
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  // variables
+  // variabless
   const snapPoints = useMemo(() => ['35%'], []);
 
   // callbacks
@@ -81,31 +83,32 @@ export const PostJobDetail = () => {
     bottomSheetModalRef.current?.dismiss();
   }, []);
 
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('index', index);
-  }, []);
-
   // @ts-ignore
   const onSubmit = (data: PostJobDetailFormType) => {
-    console.log('data', data);
+    setPostJobStep2(data);
 
-    //navigation.navigate("PostJobDetail");
+    navigation.navigate('PostJobPreview');
   };
 
-  console.log('onSubmit', onSubmit);
-
-  const renderItem = useCallback(({ item }: any) => {
-    return (
-      <SelectModalItem
-        title={item?.title}
-        icon={item?.icon}
-        onPress={(data) => {
-          setValue('company', data);
-          handleDismissModalPress();
-        }}
-      />
-    );
-  }, []);
+  const renderItem = useCallback(
+    ({ item }: any) => {
+      return (
+        <SelectModalItem
+          title={item?.name}
+          icon={'company'}
+          onPress={(data) => {
+            setPostCompany({
+              name: item?.name,
+              id: item?.id,
+            });
+            setValue('company', data);
+            handleDismissModalPress();
+          }}
+        />
+      );
+    },
+    [setValue]
+  );
 
   return (
     <Screen backgroundColor={colors.white} edges={['top']}>
@@ -115,13 +118,13 @@ export const PostJobDetail = () => {
         backgroundColor={'grey500'}
         paddingBottom={'medium'}
       >
-        <StepIndicator stepCount={4} currentPosition={1} labels={labels} />
+        <StepIndicator stepCount={4} currentPosition={2} labels={labels} />
       </View>
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        <View paddingTop={'large'} paddingHorizontal={'large'}>
+        <View paddingTop={'large'} gap={'medium'} paddingHorizontal={'large'}>
           <SelectOptionButton
             label="Company"
             isSelected={watchCompany ? true : false}
@@ -130,15 +133,35 @@ export const PostJobDetail = () => {
             onPress={handlePresentModalPress}
             error={errors?.company?.message}
           />
-          <View height={scale(8)} />
-          <ControlledInput
+
+          {/* <ControlledInput
             placeholder="Enter workspace"
             label="Workspace Type"
             control={control}
             name="workSpace"
-          />
+          /> */}
 
-          <View height={scale(8)} />
+          <View>
+            <SelectionBox
+              label="Job category"
+              placeholder="Select job category"
+              data={jobCategores}
+              onChange={(data) => {
+                setValue('jobCategory', `${data?.id},${data?.name}`);
+
+                setError('jobCategory', {
+                  type: 'custom',
+                  message: '',
+                });
+              }}
+            />
+            {errors?.jobCategory?.message && (
+              <Text paddingTop={'small'} variant="regular14" color={'error'}>
+                {errors?.jobCategory?.message}
+              </Text>
+            )}
+          </View>
+
           <ControlledInput
             placeholder="Enter location"
             label="Job Location"
@@ -151,9 +174,8 @@ export const PostJobDetail = () => {
             isSelected={watchDate ? true : false}
             selectedText={watchDate ?? 'Select date'}
             icon="calendar"
-            onPress={() => null}
+            onPress={() => setOpen(true)}
           />
-          <View height={scale(8)} />
         </View>
 
         <View height={scale(72)} />
@@ -166,9 +188,7 @@ export const PostJobDetail = () => {
           <Button
             label="Next"
             marginHorizontal={'large'}
-            onPress={() => {
-              navigation.navigate('PostJobPreview');
-            }}
+            onPress={handleSubmit(onSubmit)}
           />
         </View>
       </ScrollView>
@@ -177,16 +197,32 @@ export const PostJobDetail = () => {
         ref={bottomSheetModalRef}
         index={0}
         snapPoints={snapPoints}
-        onChange={handleSheetChanges}
         backgroundStyle={{ backgroundColor: 'rgb(250,250,253)' }}
       >
         <BottomSheetFlatList
           contentContainerStyle={styles.contentContainer}
-          data={data2}
+          data={companies?.response?.data}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
         />
       </BottomModal>
+
+      <DatePicker
+        modal
+        locale="en"
+        open={open}
+        date={date}
+        onConfirm={(date) => {
+          const myDate = new Date(date);
+          const formattedDate = format(myDate, 'yyyy/MM/dd');
+          setValue('date', formattedDate);
+          setOpen(false);
+          setDate(date);
+        }}
+        onCancel={() => {
+          setOpen(false);
+        }}
+      />
     </Screen>
   );
 };

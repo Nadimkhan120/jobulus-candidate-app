@@ -1,8 +1,8 @@
-import React from 'react';
-import { scale } from 'react-native-size-matters';
+import React from "react";
+import { scale } from "react-native-size-matters";
 
 //import { StyleSheet, useWindowDimensions } from "react-native";
-import { Text, View } from '@/ui';
+import { Text, View } from "@/ui";
 
 type StepIndicatorProps = {
   data: string[];
@@ -13,12 +13,12 @@ export const StepIndicator = ({ data }: StepIndicatorProps) => {
 
   return (
     <View>
-      <View backgroundColor={'primary'} height={scale(6)} />
+      <View backgroundColor={"primary"} height={scale(6)} />
       <View
-        flexDirection={'row'}
+        flexDirection={"row"}
         // paddingHorizontal={"large"}
-        alignItems={'center'}
-        justifyContent={'space-between'}
+        alignItems={"center"}
+        justifyContent={"space-between"}
       >
         {data?.map((item, index) => {
           let firstElement = data[0];
@@ -29,23 +29,15 @@ export const StepIndicator = ({ data }: StepIndicatorProps) => {
           let flexStart = firstElement === item;
           let flexEnd = lastElement === item;
 
-          console.log('flexStart', flexStart);
-
           return (
             <View
               key={index}
-              justifyContent={'center'}
-              alignItems={
-                flexStart ? 'flex-start' : flexEnd ? 'flex-end' : 'center'
-              }
-              flexDirection={'column'}
+              justifyContent={"center"}
+              alignItems={flexStart ? "flex-start" : flexEnd ? "flex-end" : "center"}
+              flexDirection={"column"}
               // backgroundColor={"primary"}
             >
-              <View
-                height={scale(8)}
-                width={scale(12)}
-                backgroundColor={'info'}
-              />
+              <View height={scale(8)} width={scale(12)} backgroundColor={"info"} />
 
               <View>
                 <Text>{item}</Text>

@@ -99,7 +99,13 @@ export const Home = () => {
       >
         <View>
           {DATA?.map((element, index) => {
-            return <PersonItem key={index} {...element} />;
+            return (
+              <PersonItem
+                key={index}
+                //@ts-ignore
+                data={element}
+              />
+            );
           })}
         </View>
       </Animated.ScrollView>
