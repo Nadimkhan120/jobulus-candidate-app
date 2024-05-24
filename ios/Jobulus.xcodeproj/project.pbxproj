@@ -586,7 +586,7 @@
 				CODE_SIGN_ENTITLEMENTS = Jobulus/Jobulus.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 4Y34VJ367J;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Jobulus/Info.plist;
@@ -621,7 +621,7 @@
 				CODE_SIGN_ENTITLEMENTS = Jobulus/Jobulus.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 4Y34VJ367J;
 				INFOPLIST_FILE = Jobulus/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Jobulus;
