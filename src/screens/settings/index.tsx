@@ -1,109 +1,230 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { BottomSheetFooter, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@shopify/restyle';
-import { Image } from 'expo-image';
-import React from 'react';
-import { ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { StyleSheet, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scale } from 'react-native-size-matters';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 
-import { icons } from '@/assets/icons';
-import { CompanyButton } from '@/components/company-button';
-import SettingsItem from '@/components/settings-item';
+import { BottomModal } from '@/components/bottom-modal';
+import SelectionBox from '@/components/drop-down';
+import { SearchWithFilter } from '@/components/search-with-filter';
+import { useDebounce } from '@/hooks';
+import {
+  useAllCandidates,
+  useCandidateByName,
+  useFilterCandidates,
+} from '@/services/api/candidate';
+import { useIndustries, useSkills } from '@/services/api/settings';
 import type { Theme } from '@/theme';
-import { Screen, Text, View } from '@/ui';
+import { Button, Screen, Text, View } from '@/ui';
+
+import Explore from './explore';
+import Follow from './followed';
+import Saved from './saved';
+import { BottomSheetDefaultFooterProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetFooter/types';
+
+const FirstRoute = () => <Explore />;
+const SecondRoute = () => <Follow />;
+const ThirdRoute = () => <Saved />;
+
+const renderScene = SceneMap({
+  first: FirstRoute,
+  second: SecondRoute,
+  third: ThirdRoute,
+});
+
+const renderLabel = ({
+  focused,
+  route,
+}: {
+  focused: boolean;
+  route: { title: string };
+}) => {
+  return (
+    <Text
+      color={focused ? 'primary' : 'grey300'}
+      variant={focused ? 'medium14' : 'regular14'}
+    >
+      {route.title}
+    </Text>
+  );
+};
+
+const renderTabBar = (props: any) => {
+  return (
+    <View backgroundColor={'white'}>
+      <TabBar
+        {...props}
+        style={styles.tabBar}
+        inactiveColor={'black'}
+        indicatorStyle={[styles.indicatorStyle]}
+        scrollEnabled={true}
+        renderLabel={renderLabel}
+        tabStyle={{ width: 120 }}
+      />
+      <View height={scale(4)} backgroundColor={'grey500'} />
+    </View>
+  );
+};
 
 export const Settings = () => {
   const { colors } = useTheme<Theme>();
-  const navigation = useNavigation();
+  const { navigate } = useNavigation();
+  const { bottom } = useSafeAreaInsets();
 
-  const { width } = useWindowDimensions();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilter, setShowFilter] = useState(false);
+  const [industry, setIndustry] = useState(null);
+  const [skill, setSkill] = useState(null);
+
+  const debouncedSearch = useDebounce<string>(searchQuery, 300);
+
+  useAllCandidates();
+  const { data: industries } = useIndustries();
+  const { data: skills } = useSkills();
+
+  useCandidateByName({
+    enabled: debouncedSearch?.length ? true : false,
+    variables: {
+      search: debouncedSearch,
+    },
+  });
+
+  useFilterCandidates({
+    enabled: showFilter ? true : false,
+    variables: {
+      skill: skill,
+      industries: industry,
+    },
+  });
+
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'first', title: 'Explore' },
+    { key: 'second', title: 'Followed' },
+    { key: 'third', title: 'Saved' },
+  ]);
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  // variables
+  const snapPoints = useMemo(() => ['85%'], []);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+
+  // callbacks
+  const handleDismissModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+  }, []);
+
+  // render footer
+  const renderFooter = useCallback(
+    (props: React.JSX.IntrinsicAttributes & BottomSheetDefaultFooterProps) => (
+      <BottomSheetFooter {...props} bottomInset={bottom}>
+        <View paddingVertical={'large'} borderTopWidth={1} borderTopColor={'grey400'}>
+          <Button
+            marginHorizontal={'large'}
+            label="Show Results"
+            onPress={() => {
+              setShowFilter(true);
+              handleDismissModalPress();
+            }}
+          />
+        </View>
+      </BottomSheetFooter>
+    ),
+    [setShowFilter, showFilter]
+  );
 
   return (
     <Screen backgroundColor={colors.white} edges={['top']}>
-      <View flex={1}>
-        <View height={scale(119)}>
-          <Image
-            source={icons['back-cover']}
-            style={{ height: scale(119), width: width }}
-          />
-        </View>
-
-        <View
-          alignSelf={'flex-start'}
-          marginLeft={'large'}
-          style={{
-            marginTop: -scale(43),
-          }}
-        >
-          <CompanyButton
-            icon="company"
-            onPress={() => null}
-            size={scale(86)}
-            imageSize={scale(86)}
-          />
-        </View>
-
-        <View paddingHorizontal={'large'} paddingVertical={'large'}>
-          <Text variant={'semiBold20'} color={'black'}>
-            vFairs
-          </Text>
-          <Text variant={'regular13'} color={'grey200'}>
-            Lahore-Islamabad Motorway, Punjab, Pakistan
-          </Text>
-        </View>
-
-        <View
-          height={StyleSheet.hairlineWidth * 2}
-          backgroundColor={'grey500'}
-        />
-
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View
-            paddingHorizontal={'large'}
-            gap={'medium'}
-            paddingTop={'medium'}
-          >
-            <SettingsItem
-              icon="company-page"
-              title="Company Page"
-              onPress={() => navigation.navigate('CompanyDetail')}
-            />
-            <SettingsItem
-              icon="person"
-              title="User Management"
-              onPress={() => navigation.navigate('Users')}
-            />
-            {/* <SettingsItem icon="person" title="Recruitment Process" onPress={() => null} /> */}
-            <SettingsItem
-              icon="person"
-              title="JD Library"
-              onPress={() => navigation.navigate('JdLibrary')}
-            />
-            <SettingsItem
-              icon="person"
-              title="My Account"
-              onPress={() => navigation.navigate('MyAccount')}
-            />
-            <SettingsItem
-              icon="credit-card"
-              title="Payments"
-              onPress={() => navigation.navigate('Payments')}
-            />
-            <SettingsItem
-              icon="settings"
-              title="Settings"
-              onPress={() => navigation.navigate('UserSettings')}
-            />
-          </View>
-        </ScrollView>
+      <View
+        height={scale(50)}
+        flexDirection={'row'}
+        alignItems={'center'}
+        paddingHorizontal={'large'}
+        borderBottomColor={'grey500'}
+        borderBottomWidth={1}
+      >
+        <Text variant={'medium17'} color={'grey100'}>
+          Companies
+        </Text>
       </View>
+
+      <SearchWithFilter
+        searchValue={searchQuery}
+        onChangeText={(text) => setSearchQuery(text)}
+        onFilter={handlePresentModalPress}
+        onFocus={() => {
+          navigate('Search');
+        }}
+      />
+
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+        renderTabBar={renderTabBar}
+      />
+
+      <BottomModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={snapPoints}
+        backgroundStyle={{ backgroundColor: 'rgb(250,250,253)' }}
+        footerComponent={renderFooter}
+      >
+        <BottomSheetView style={styles.contentContainer}>
+          <View alignSelf={'center'} paddingVertical={'large'}>
+            <Text variant={'medium17'} color={'black'}>
+              Set Filters
+            </Text>
+          </View>
+
+          <SelectionBox
+            label="Industry"
+            placeholder="Select industry"
+            data={industries?.response?.data}
+            onChange={(menu) => {
+              setIndustry(menu?.id);
+            }}
+          />
+          <SelectionBox
+            label="Skills"
+            placeholder="Skills"
+            data={skills}
+            onChange={(menu) => {
+              setSkill(menu?.id);
+            }}
+          />
+          {/* <SelectionBox label="Applied on last job" placeholder="Select last job" />
+          <SelectionBox label="Last job status" placeholder="Select status" /> */}
+        </BottomSheetView>
+      </BottomModal>
     </Screen>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    paddingBottom: scale(160),
+  contentContainer: {
+    paddingHorizontal: scale(16),
+  },
+  tabBar: {
+    backgroundColor: 'white',
+    height: scale(40),
+  },
+  indicatorStyle: {
+    height: scale(3),
+    backgroundColor: '#01C96C',
   },
 });
-
-export default Settings;

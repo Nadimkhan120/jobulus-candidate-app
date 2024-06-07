@@ -1,15 +1,18 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as React from "react";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as React from 'react';
 
 import {
   AgencyInformation,
   CompanyInformation,
+  ForgotPassword,
   Login,
   Register,
   RegisterOptions,
+  ResetPassword,
   SendInvite,
   VerifyCode,
-} from "@/screens";
+  ChooseLocation,
+} from '@/screens';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -19,6 +22,9 @@ export type AuthStackParamList = {
   CompanyInformation: undefined;
   SendInvite: undefined;
   AgencyInformation: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: { email: string; token: string };
+  ChooseAuthLocation: { from: any };
 };
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
@@ -56,6 +62,20 @@ export const AuthNavigator = () => {
         }}
       />
       <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ResetPassword"
+        component={ResetPassword}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="CompanyInformation"
         component={CompanyInformation}
         options={{
@@ -72,6 +92,13 @@ export const AuthNavigator = () => {
       <Stack.Screen
         name="AgencyInformation"
         component={AgencyInformation}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ChooseAuthLocation"
+        component={ChooseLocation}
         options={{
           headerShown: false,
         }}

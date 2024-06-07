@@ -1,12 +1,13 @@
 import type { ColorProps } from '@shopify/restyle';
 import React from 'react';
-import { Image } from 'react-native';
+import {} from 'react-native';
 import { scale } from 'react-native-size-matters';
 
 import type { IconTypes } from '@/assets/icons';
 import { icons } from '@/assets/icons';
 import type { Theme } from '@/theme';
 import { PressableScale, View } from '@/ui';
+import { Image } from 'expo-image';
 
 type ImageButtonProps = {
   icon: IconTypes;
@@ -14,6 +15,7 @@ type ImageButtonProps = {
   size?: number;
   imageSize?: number;
   backgroundColor?: ColorProps<Theme>['color'];
+  companyImage?: string;
 };
 
 export const CompanyButton = ({
@@ -22,6 +24,7 @@ export const CompanyButton = ({
   imageSize = scale(18),
   onPress,
   backgroundColor,
+  companyImage,
 }: ImageButtonProps) => {
   return (
     <PressableScale onPress={onPress}>
@@ -34,7 +37,7 @@ export const CompanyButton = ({
         borderRadius={scale(8)}
       >
         <Image
-          source={icons[icon]}
+          source={companyImage ?? icons[icon]}
           style={{
             height: imageSize,
             width: imageSize,

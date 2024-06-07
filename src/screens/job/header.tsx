@@ -1,19 +1,24 @@
-import { Image } from 'expo-image';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { scale } from 'react-native-size-matters';
-
-import { icons } from '@/assets/icons';
+import { Image } from 'expo-image';
 import { Avatar } from '@/components/avatar';
+import type { CandidateProfile } from '@/services/api/candidate';
 import { Text, View } from '@/ui';
 
-const Header = () => {
+type HeaderProps = {
+  data: CandidateProfile;
+};
+
+const Header = ({ data }: HeaderProps) => {
   return (
     <View>
       <Image
-        source={require('src/assets/images/header.png')}
+        source={
+          data?.cover_pic ? data?.cover_pic : require('src/assets/images/header.png')
+        }
         style={styles.image}
-        contentFit="contain"
+        contentFit="cover"
       />
       <View
         alignSelf={'center'}
@@ -21,22 +26,26 @@ const Header = () => {
           marginTop: -scale(30),
         }}
       >
-        <Avatar source={icons['avatar-2']} size="large" />
+        <Avatar
+          source={{
+            uri: data?.profile_pic
+              ? data?.profile_pic
+              : 'https://fakeimg.pl/400x400/cccccc/cccccc',
+          }}
+          placeholder={{ uri: 'https://fakeimg.pl/400x400/cccccc/cccccc' }}
+          size="large"
+        />
       </View>
 
-      <View
-        justifyContent={'center'}
-        paddingVertical={'large'}
-        alignItems={'center'}
-      >
+      <View justifyContent={'center'} paddingVertical={'large'} alignItems={'center'}>
         <Text variant={'medium20'} color={'black'}>
-          Michael Kamleitner
+          {data?.full_name}
         </Text>
         <Text variant={'regular13'} paddingVertical={'tiny'} color={'grey100'}>
-          CEO at Walls.io, Founder at Swat.io
+          {data?.job_title}
         </Text>
-        <Text variant={'regular13'} color={'grey200'}>
-          Lahore, Punjab, Pakistan
+        <Text variant={'regular13'} textTransform={'capitalize'} color={'grey200'}>
+          {data?.contact?.city_name}, {data?.contact?.country_name}
         </Text>
       </View>
     </View>

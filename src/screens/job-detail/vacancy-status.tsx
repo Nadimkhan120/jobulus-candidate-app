@@ -8,20 +8,7 @@ import { PressableScale, Text, View } from '@/ui';
 
 import VerticalBarChart from './bar-chart';
 
-const data = [
-  {
-    id: 1,
-    text: 'Active job seekers',
-    precentage: '13.5%',
-  },
-  {
-    id: 2,
-    text: 'Applied',
-    precentage: '20',
-  },
-];
-
-const VacanciesStatus = () => {
+const VacanciesStatus = ({ applicants }: { applicants: any }) => {
   return (
     <View backgroundColor={'white'} paddingVertical={'large'}>
       <View
@@ -49,7 +36,18 @@ const VacanciesStatus = () => {
         paddingHorizontal={'large'}
         columnGap={'medium'}
       >
-        {data?.map((element, index) => {
+        {[
+          {
+            id: 1,
+            text: 'Active job seekers',
+            precentage: '0',
+          },
+          {
+            id: 2,
+            text: 'Applied',
+            precentage: applicants?.length,
+          },
+        ]?.map((element, index) => {
           return (
             <Pressable style={style.button} key={index}>
               <View

@@ -1,87 +1,87 @@
-import type { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTheme } from '@shopify/restyle';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { StyleSheet } from 'react-native';
 import { scale } from 'react-native-size-matters';
 import * as z from 'zod';
-
-import { BottomModal } from '@/components/bottom-modal';
 import StepIndicator from '@/components/indicator-2';
 import { ScreenHeader } from '@/components/screen-header';
-import { SelectModalItem } from '@/components/select-modal-item';
-import { SelectOptionButton } from '@/components/select-option-button';
-import { JobMenu } from '@/constants/job-menu';
 import type { Theme } from '@/theme';
-import { Button, ControlledInput, Screen, Text, View } from '@/ui';
+import { Button, ControlledInput, PressableScale, Screen, Text, View } from '@/ui';
+import { loginFromVerifyCode } from '@/store/auth';
+import { useUser } from '@/store/user';
+import { useSendInviteLink } from '@/services/api/auth';
+import { showErrorMessage, showSuccessMessage } from '@/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTheme } from '@shopify/restyle';
+import { Image } from 'expo-image';
+import { icons } from '@/assets/icons';
 
 const labels = ['Registration', 'Information', 'Invite'];
 
 const schema = z.object({
-  email: z
-    .string({
-      required_error: 'Email is required',
-    })
-    .email('Invalid email format'),
-  role: z.string({
-    required_error: 'Role required',
-  }),
+  email: z.string().email('Invalid email format'),
+  role: z.string(),
 });
 
 export type CompanyInformationFormType2 = z.infer<typeof schema>;
 
 export const SendInvite = () => {
   const { colors } = useTheme<Theme>();
-  //const { navigate } = useNavigation();
 
   const {
-    handleSubmit,
     control,
     formState: { errors },
     setValue,
-
     watch,
   } = useForm<CompanyInformationFormType2>({
     resolver: zodResolver(schema),
   });
 
-  const watchRole = watch('role');
+  const user = useUser((state) => state?.user);
+  const { mutate: sendInviteApi, isLoading: isLoadingInvite } = useSendInviteLink();
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const [selectedInvites, setSelectedInvites] = useState([]);
 
-  // variables
-  const snapPoints = useMemo(() => ['35%'], []);
+  const watchEmail = watch('email');
 
-  const onSubmit = (data: CompanyInformationFormType2) => {
-    console.log('data', data);
-
-    //navigate("SendInvite");
+  const selectRole = () => {
+    let existingUsers = [...selectedInvites];
+    existingUsers.push({ email: watchEmail });
+    setSelectedInvites(existingUsers);
+    setValue('email', '');
   };
 
-  // callbacks
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
+  const sendIvitesToPeople = () => {
+    let body = {
+      company_id: user?.id,
+      invited_by_id: user?.id,
+      emails: selectedInvites?.map((element) => {
+        return {
+          role: 6, //'guest',
+          email: element?.email,
+        };
+      }),
+    };
 
-  // callbacks
-  const handleDismissModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.dismiss();
-  }, []);
+    if (body?.emails?.length === 0) {
+      showErrorMessage('Please enter email and select role first');
+      return;
+    }
 
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('index', index);
-  }, []);
-
-  const selectRole = (data) => {
-    setValue('role', data);
-    handleDismissModalPress();
+    sendInviteApi(body, {
+      onSuccess: (data) => {
+        if (data?.response?.status === 200) {
+          loginFromVerifyCode();
+          showSuccessMessage('Invites sent successfully.');
+        } else {
+          showErrorMessage(data?.response?.message ?? 'Something went wrong');
+        }
+      },
+      onError: (error) => {
+        // An error happened!
+        console.log(`error`, error?.response?.data);
+      },
+    });
   };
-
-  const renderItem = useCallback(({ item }: any) => {
-    return <SelectModalItem title={item?.title} onPress={selectRole} />;
-  }, []);
 
   return (
     <Screen backgroundColor={colors.white} edges={['top', 'bottom']}>
@@ -108,26 +108,58 @@ export const SendInvite = () => {
         </View>
 
         <View paddingTop={'large'} flexDirection={'row'}>
-          <View flex={0.7} marginRight={'medium'}>
+          <View flex={1} marginRight={'medium'}>
             <ControlledInput
               placeholder="Enter email"
               label="Email"
               control={control}
               name="email"
-            />
-          </View>
-
-          <View flex={0.3}>
-            <SelectOptionButton
-              label="Role"
-              isSelected={watchRole ? true : false}
-              selectedText={watchRole ?? 'Role'}
-              icon="arrow-ios-down"
-              onPress={handlePresentModalPress}
-              error={errors?.role?.message}
+              icon={
+                <PressableScale onPress={selectRole}>
+                  <Image
+                    source={icons['link']}
+                    style={{ width: scale(24), height: scale(24) }}
+                  />
+                </PressableScale>
+              }
             />
           </View>
         </View>
+
+        {selectedInvites?.map((element, key) => {
+          return (
+            <View
+              key={key}
+              backgroundColor={'grey500'}
+              marginTop={'medium'}
+              borderRadius={scale(8)}
+              padding={'medium'}
+              flexDirection={'row'}
+              alignItems={'center'}
+              justifyContent={'space-between'}
+            >
+              <View>
+                <Text variant={'medium13'} color={'black'}>
+                  {element?.email}
+                </Text>
+              </View>
+              <PressableScale
+                onPress={() => {
+                  let removeItems = selectedInvites?.filter(
+                    (data) => data?.email !== element?.email
+                  );
+
+                  setSelectedInvites(removeItems);
+                }}
+              >
+                <Image
+                  source={icons['close']}
+                  style={{ height: scale(20), width: scale(20) }}
+                />
+              </PressableScale>
+            </View>
+          );
+        })}
 
         <View flex={1} justifyContent={'flex-end'} paddingBottom={'large'}>
           <View
@@ -138,42 +170,22 @@ export const SendInvite = () => {
             <View width={scale(100)}>
               <Button
                 backgroundColor={'black'}
-                label="Finish"
-                onPress={handleSubmit(onSubmit)}
+                label="Skip"
+                onPress={() => {
+                  loginFromVerifyCode();
+                }}
               />
             </View>
             <View width={scale(100)}>
               <Button
-                label="Skip"
-                onPress={handleSubmit(onSubmit)}
-                backgroundColor={'grey300'}
+                label="Finish"
+                onPress={sendIvitesToPeople}
+                loading={isLoadingInvite}
               />
             </View>
           </View>
         </View>
       </View>
-
-      <BottomModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backgroundStyle={{ backgroundColor: colors.background }}
-      >
-        <BottomSheetFlatList
-          contentContainerStyle={styles.contentContainer}
-          data={JobMenu}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderItem}
-        />
-      </BottomModal>
     </Screen>
   );
 };
-
-const styles = StyleSheet.create({
-  contentContainer: {
-    paddingVertical: scale(24),
-    paddingHorizontal: scale(16),
-  },
-});

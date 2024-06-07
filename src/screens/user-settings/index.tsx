@@ -6,9 +6,45 @@ import { CompanyButton } from '@/components/company-button';
 import { ScreenHeader } from '@/components/screen-header';
 import type { Theme } from '@/theme';
 import { PressableScale, Screen, Text, View } from '@/ui';
+import { useDeleteAccount } from '@/services/api/profile';
+import { removeUserData, useUser } from '@/store/user';
+import { showSuccessMessage } from '@/utils';
+import { queryClient } from '@/services/api/api-provider';
+import { closeDrawer } from '@/store/app';
+import { logOut } from '@/store/auth';
 
 export const UserSettings = () => {
   const { colors } = useTheme<Theme>();
+
+  const user = useUser((state) => state?.user);
+
+  console.log('user', user);
+
+  const { mutate: deleteAccountApi, isLoading } = useDeleteAccount();
+
+  const deleteUserAccount = () => {
+    const data = {
+      unique_id: '',
+    };
+
+    deleteAccountApi(data, {
+      onSuccess: (response) => {
+        if (response?.response?.status === 200) {
+          closeDrawer();
+          removeUserData();
+          logOut();
+
+          showSuccessMessage('Account deleted successfully');
+        } else {
+        }
+      },
+      onError: (error) => {
+        // An error happened!
+        // @ts-ignore
+        console.log(`error`, error?.response.data?.message);
+      },
+    });
+  };
 
   return (
     <Screen backgroundColor={colors.white} edges={['top']}>
@@ -54,7 +90,7 @@ export const UserSettings = () => {
             borderRadius={scale(8)}
           >
             <Text variant={'medium16'} color={'error'}>
-              Delete Account
+              {isLoading ? '...Deleting Account' : 'Delete Account'}
             </Text>
           </View>
         </PressableScale>

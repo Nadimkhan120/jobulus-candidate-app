@@ -1,0 +1,92 @@
+{
+  "project_info": {
+    "project_number": "353398465240",
+    "project_id": "jobulusapp",
+    "storage_bucket": "jobulusapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353398465240:android:41440d2f17c023999f6dad",
+        "android_client_info": {
+          "package_name": "com.jobuluscompany"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353398465240-aemlrmbtdkcbfnotlbccl809h6lre24n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jobuluscompany",
+            "certificate_hash": "a74fd26f6cf005c4bb65890f0b93e5e2b03d4607"
+          }
+        },
+        {
+          "client_id": "353398465240-rp2ofcplt38uv5b1jsp7l9q4akdrpv8i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jobuluscompany",
+            "certificate_hash": "5b592d29147550bc7e598f128cf418be55046c72"
+          }
+        },
+        {
+          "client_id": "353398465240-ji9uf84r9gjlqrk1ucgf8t2f5c545bi2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt4KmFDAvTyPvYDvSzjLv8Q6JttzhDyzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353398465240-ji9uf84r9gjlqrk1ucgf8t2f5c545bi2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353398465240:android:cbb1a1dcc319531d9f6dad",
+        "android_client_info": {
+          "package_name": "com.jubulus.candidate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353398465240-se1llc6o48umr4fl6p3a139ljpc38uso.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jubulus.candidate",
+            "certificate_hash": "822563485137a34492671b7dbf16882818bbc010"
+          }
+        },
+        {
+          "client_id": "353398465240-ji9uf84r9gjlqrk1ucgf8t2f5c545bi2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt4KmFDAvTyPvYDvSzjLv8Q6JttzhDyzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353398465240-ji9uf84r9gjlqrk1ucgf8t2f5c545bi2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

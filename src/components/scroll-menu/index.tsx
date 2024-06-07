@@ -5,9 +5,9 @@ import { scale } from 'react-native-size-matters';
 import { PressableScale, Text, View } from '@/ui';
 
 type ScrollMenuProps = {
-  data: string[];
+  data: { name: string; id: number }[];
   selectedIndex: number;
-  onChangeMenu: (index: number) => void;
+  onChangeMenu: (data: any) => void;
 };
 
 export const ScrollMenu = ({
@@ -23,14 +23,14 @@ export const ScrollMenu = ({
         contentContainerStyle={styles.scrollContainer}
       >
         {data?.map((element, index) => {
-          const isSelected = selectedIndex === index;
+          const isSelected = selectedIndex === element?.id;
 
           return (
-            <PressableScale key={index} onPress={() => onChangeMenu?.(index)}>
+            <PressableScale key={index} onPress={() => onChangeMenu?.(element)}>
               <View
                 paddingHorizontal={'medium'}
                 height={scale(37)}
-                borderWidth={2}
+                borderWidth={StyleSheet.hairlineWidth * 2}
                 borderColor={isSelected ? 'primary' : 'grey300'}
                 borderRadius={scale(24)}
                 justifyContent={'center'}
@@ -42,7 +42,7 @@ export const ScrollMenu = ({
                   variant={'medium14'}
                   color={isSelected ? 'white' : 'grey300'}
                 >
-                  {element}
+                  {element?.name ?? ''}
                 </Text>
               </View>
             </PressableScale>

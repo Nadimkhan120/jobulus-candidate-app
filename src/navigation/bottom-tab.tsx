@@ -57,7 +57,11 @@ export function AppBottomTab({ state, descriptors, navigation }: any) {
           >
             <View style={styles.tabStyle}>
               <TabBarIcon name={label.toLowerCase()} focused={isFocused} />
-              <Text variant={'regular12'} fontWeight={'400'}>
+              <Text
+                variant={'regular12'}
+                color={isFocused ? 'black' : 'grey300'}
+                fontWeight={'400'}
+              >
                 {label}
               </Text>
             </View>
@@ -85,6 +89,8 @@ const styles = StyleSheet.create({
     elevation: 2,
     position: 'absolute',
     bottom: 0,
+    borderTopColor: '#EDEDEE', //palette.grey100,
+    borderTopWidth: StyleSheet.hairlineWidth * 3,
   },
   tabStyle: {
     flex: 1,

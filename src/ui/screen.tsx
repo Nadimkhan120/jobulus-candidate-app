@@ -1,17 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
-import { useIsFocused } from '@react-navigation/native';
-import { useTheme } from '@shopify/restyle';
-import React from 'react';
-import type { StatusBarProps } from 'react-native';
-import { StatusBar } from 'react-native';
-import type { SafeAreaViewProps } from 'react-native-safe-area-context';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useIsFocused } from "@react-navigation/native";
+import { useTheme } from "@shopify/restyle";
+import React from "react";
+import type { StatusBarProps } from "react-native";
+import { StatusBar } from "react-native";
+import type { SafeAreaViewProps } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import type { Theme } from '@/theme';
-import { View } from '@/ui';
+import type { Theme } from "@/theme";
+import { View } from "@/ui";
 
 export const FocusAwareStatusBar = ({
-  barStyle = 'dark-content',
+  barStyle = "dark-content",
   ...props
 }: StatusBarProps) => {
   const isFocused = useIsFocused();
@@ -22,18 +22,18 @@ export const FocusAwareStatusBar = ({
 
 type Props = {
   children: React.ReactNode;
-  statusBarColor?: StatusBarProps['backgroundColor'];
-  barStyle?: StatusBarProps['barStyle'];
-  translucent?: StatusBarProps['translucent'];
+  statusBarColor?: StatusBarProps["backgroundColor"];
+  barStyle?: StatusBarProps["barStyle"];
+  translucent?: StatusBarProps["translucent"];
   backgroundColor?: string;
 } & SafeAreaViewProps;
 
 export const Screen = ({
   children,
-  statusBarColor = '#FFFFFF',
-  barStyle = 'dark-content',
+  statusBarColor = "#FFFFFF",
+  barStyle,
   translucent = false,
-  backgroundColor = 'background',
+  backgroundColor = "background",
   ...rest
 }: Props) => {
   let theme = useTheme<Theme>();

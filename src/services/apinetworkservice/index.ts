@@ -1,45 +1,31 @@
-import BaseConfig from "@/config";
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+
+import BaseConfig from '@/config';
+
 //@ts-ignore
-import { ParamsNetwork } from "./type";
+import type { ParamsNetwork } from './type';
 
 export const RESULT_CODE_PUSH_OUT = 401;
 const TIME_OUT = 20000;
 
-import Axios, { AxiosRequestConfig } from "axios";
-import { ResponseBase } from "./type";
+import type { AxiosRequestConfig } from 'axios';
+import Axios from 'axios';
+
+import { getAuthToken } from '@/store/auth';
 
 //@ts-ignore
-import { controller, handleParameter } from "./helper";
-import { getAuthToken } from "@/store/auth";
+import { controller, handleParameter } from './helper';
+import type { ResponseBase } from './type';
 
 const AxiosInstance = Axios.create({});
-
-AxiosInstance.interceptors.response.use(
-  (response) => response,
-  async function (error) {
-    const originalRequest = error.config;
-    if (
-      error &&
-      error.response &&
-      (error.response.status === 403 || error.response.status === 401) &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true;
-      return AxiosInstance(originalRequest);
-    }
-    return Promise.reject(error);
-  }
-);
 
 // base
 function Request(config: ParamsNetwork) {
   const token = getAuthToken();
 
   let headers = {
-    "Content-Type": "application/json",
-    authorization: "Bearer " + token ?? "",
+    'Content-Type': 'application/json',
+    authorization: 'Bearer ' + token ?? '',
   };
 
   const defaultConfig: AxiosRequestConfig = {
@@ -61,45 +47,52 @@ function Request(config: ParamsNetwork) {
       })
       .catch((error) => {
         reject(error);
+
+        console.log('error', error?.response);
       });
   });
 }
 
 // get
 async function Get(params: ParamsNetwork) {
-  return Request(handleParameter(params, "GET"));
+  return Request(handleParameter(params, 'GET'));
 }
 
 // post
-async function Post<T>(params: ParamsNetwork) {
-  return Request(handleParameter(params, "POST"));
+//@ts-ignore
+async function Post(params: ParamsNetwork) {
+  return Request(handleParameter(params, 'POST'));
 }
 
 type ParameterPostFormData = AxiosRequestConfig & ParamsNetwork;
 
 // post FormData
-async function PostFormData<T>(params: ParamsNetwork) {
+//@ts-ignore
+async function PostFormData(params: ParamsNetwork) {
   //   const { token }: AppState = getState("app");
-  const headers: AxiosRequestConfig["headers"] = {
+  const headers: AxiosRequestConfig['headers'] = {
     // [tokenKeyHeader]: token ?? "",
-    "Content-Type": "multipart/form-data",
+    'Content-Type': 'multipart/form-data',
   };
-  return Request(handleParameter<ParameterPostFormData>({ ...params, headers }, "POST"));
+  return Request(handleParameter<ParameterPostFormData>({ ...params, headers }, 'POST'));
 }
 
 // put
-async function Put<T>(params: ParamsNetwork) {
-  return Request(handleParameter(params, "PUT"));
+//@ts-ignore
+async function Put(params: ParamsNetwork) {
+  return Request(handleParameter(params, 'PUT'));
 }
 
 // patch
-async function Patch<T>(params: ParamsNetwork) {
-  return Request(handleParameter(params, "PATCH"));
+//@ts-ignore
+async function Patch(params: ParamsNetwork) {
+  return Request(handleParameter(params, 'PATCH'));
 }
 
 // delete
-async function Delete<T>(params: ParamsNetwork) {
-  return Request(handleParameter(params, "DELETE"));
+//@ts-ignore
+async function Delete(params: ParamsNetwork) {
+  return Request(handleParameter(params, 'DELETE'));
 }
 
 export type NetWorkResponseType<T> = (

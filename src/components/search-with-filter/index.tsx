@@ -6,6 +6,9 @@ import { View } from '@/ui';
 import { ImageButton } from '../image-button';
 
 type SearchWithFilterProp = {
+  searchValue?: string;
+  onChangeText?: (text: string) => void;
+  onFocus?: () => void;
   onFilter: () => void;
   onSwap?: () => void;
 };
@@ -13,6 +16,9 @@ type SearchWithFilterProp = {
 export const SearchWithFilter = ({
   onFilter,
   onSwap,
+  searchValue,
+  onChangeText,
+  onFocus,
 }: SearchWithFilterProp) => {
   return (
     <View
@@ -24,10 +30,16 @@ export const SearchWithFilter = ({
       columnGap={'medium'}
     >
       <View flex={1}>
-        <SearchField placeholder="Search by name" showBorder={true} />
+        <SearchField
+          placeholder="Search by name"
+          showBorder={true}
+          value={searchValue}
+          onChangeText={(text) => onChangeText(text)}
+          onFocus={onFocus}
+        />
       </View>
 
-      <ImageButton icon="filter" backgroundColor={'black'} onPress={onFilter} />
+      {/* <ImageButton icon="filter" backgroundColor={'black'} onPress={onFilter} /> */}
       {onSwap ? (
         <ImageButton icon="swap" backgroundColor={'black'} onPress={onSwap} />
       ) : null}

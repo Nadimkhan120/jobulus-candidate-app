@@ -1,8 +1,8 @@
-import React from "react";
-import Modal from "react-native-modal";
-import { ActivityIndicator } from "react-native";
-import { View, Text } from "@/ui";
-import { scale } from "react-native-size-matters";
+import React from 'react';
+import Modal from 'react-native-modal';
+import { ActivityIndicator } from 'react-native';
+import { View, Text } from '@/ui';
+import { scale } from 'react-native-size-matters';
 
 type LoaderProps = {
   isVisible: boolean;
@@ -11,15 +11,15 @@ type LoaderProps = {
 const Loader = ({ isVisible }: LoaderProps) => {
   return (
     <Modal isVisible={isVisible}>
-      <View alignItems={"center"} justifyContent="center">
+      <View alignItems={'center'} justifyContent="center">
         <View
-          backgroundColor={"white"}
+          backgroundColor={'white'}
           paddingHorizontal="2xl"
-          paddingVertical={"small"}
+          paddingVertical={'small'}
           borderRadius={scale(5)}
         >
-          <ActivityIndicator color={"blue"} />
-          <Text variant={"body"} color="black">
+          <ActivityIndicator color={'blue'} />
+          <Text variant={'medium14'} color="black">
             Uploading...
           </Text>
         </View>

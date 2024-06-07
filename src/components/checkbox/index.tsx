@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
-import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated";
-import { useMix, useSharedTransition } from "../animated";
-import { execFunc } from "../common";
-import { styles } from "./styles";
-import { CheckboxProps } from "./type";
-import { Image } from "expo-image";
-import { icons } from "@/assets/icons";
+import { Image } from 'expo-image';
+import React, { useCallback, useState } from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
-const AnimatedCheck = Animated.createAnimatedComponent(Image);
+import { icons } from '@/assets/icons';
+
+import { useMix, useSharedTransition } from '../animated';
+import { execFunc } from '../common';
+import { styles } from './styles';
+import type { CheckboxProps } from './type';
 
 export const CheckBox = ({
   value,
@@ -27,7 +27,7 @@ export const CheckBox = ({
 
   // function
   const onPress = useCallback(() => {
-    if (typeof value === "boolean") {
+    if (typeof value === 'boolean') {
       execFunc(onToggle, !value);
     } else {
       execFunc(onToggle, !localValue);
@@ -53,21 +53,12 @@ export const CheckBox = ({
         <View style={[styles.outline, outlineStyleOverwrite]}>
           <Animated.View style={[styles.fill, fillStyle, styleAnimated]}>
             <Image
-              source={icons["check-white"]}
-              style={{ height: 8, width: 12 }}
+              source={icons['check-mark-white']}
+              style={{ height: 12, width: 12 }}
               contentFit="contain"
             />
           </Animated.View>
         </View>
-        {/* <View style={[styles.outline, outlineStyleOverwrite]}>
-          {value ? (
-            <AnimatedCheck
-              source={icons.check}
-              contentFit="contain"
-              style={[styles.fill, styleAnimated]}
-            />
-          ) : null}
-        </View> */}
       </>
     </TouchableOpacity>
   );

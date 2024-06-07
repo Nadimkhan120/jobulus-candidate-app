@@ -1,13 +1,8 @@
-// import React from "react";
-// import { StyleSheet } from "react-native";
-// import { scale } from "react-native-size-matters";
-// import PlusButton from "@/components/plusbutton";
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { scale } from 'react-native-size-matters';
-
-import PlusButton from '@/components/plusbutton';
 import { Text, View } from '@/ui';
+
 const Header = () => {
   return (
     <View
@@ -22,11 +17,8 @@ const Header = () => {
     >
       <View flexDirection={'column'}>
         <Text variant={'medium17'} fontWeight={'500'}>
-          Vacancies
+          Jobs
         </Text>
-      </View>
-      <View flexDirection={'column'}>
-        <PlusButton />
       </View>
     </View>
   );
@@ -34,12 +26,7 @@ const Header = () => {
 
 const style = StyleSheet.create({
   container: {
-    height: scale(48),
-    // shadowColor: "#171717",
-    // shadowOffset: { width: 2, height: 0.5 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 3,
-    // elevation: 3,
+    height: scale(56),
   },
 });
 

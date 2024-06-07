@@ -1,13 +1,15 @@
-import React from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useIsFirstTime } from "@/hooks";
-import { Onboarding } from "@/screens";
-import { useAuth } from "@/store/auth";
-import type { AppStackParamList } from "./app-navigator";
-import { AppNavigator } from "./app-navigator";
-import { AuthNavigator } from "./auth-navigator";
-import { NavigationContainer } from "./navigation-container";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import { useIsFirstTime } from '@/hooks';
+import { Onboarding } from '@/screens';
+import { useAuth } from '@/store/auth';
+
+import type { AppStackParamList } from './app-navigator';
+import { AppNavigator } from './app-navigator';
+import { AuthNavigator } from './auth-navigator';
+import { NavigationContainer } from './navigation-container';
 
 export type RootAppStackParamList = {
   Onboarding: undefined;
@@ -26,12 +28,12 @@ export const Root = () => {
       screenOptions={{
         headerShown: false,
         gestureEnabled: false,
-        animation: "none",
+        animation: 'none',
       }}
     >
       {isFirstTime ? (
         <Stack.Screen name="Onboarding" component={Onboarding} />
-      ) : status === "signOut" ? (
+      ) : status === 'signOut' ? (
         <Stack.Screen name="Auth" component={AuthNavigator} />
       ) : (
         <Stack.Screen name="App" component={AppNavigator} />

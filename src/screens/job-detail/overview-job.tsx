@@ -1,14 +1,25 @@
-import { Image } from 'expo-image';
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { scale } from 'react-native-size-matters';
 
-import { icons } from '@/assets/icons';
+// import { StyleSheet } from 'react-native';
+// import { scale } from 'react-native-size-matters';
 import { AvatarGroup } from '@/components/avatar-group';
-import { avatarGroup } from '@/constants/avatar-group';
 import { PressableScale, Text, View } from '@/ui';
 
-const OverviewJob = () => {
+type OverviewJobProps = {
+  title: string;
+  city: string;
+  country: string;
+  applicants: any;
+  companyName: string;
+};
+
+const OverviewJob = ({
+  title,
+  city,
+  country,
+  applicants,
+  companyName,
+}: OverviewJobProps) => {
   return (
     <PressableScale>
       <View paddingHorizontal={'large'} paddingVertical={'large'}>
@@ -17,8 +28,8 @@ const OverviewJob = () => {
           alignItems={'center'}
           justifyContent={'space-between'}
         >
-          <Text>Jr. Front-End Designer</Text>
-          <View
+          <Text>{title}</Text>
+          {/* <View
             width={scale(30)}
             height={scale(30)}
             backgroundColor={'primary'}
@@ -27,42 +38,51 @@ const OverviewJob = () => {
             justifyContent={'center'}
           >
             <Image source={icons.pencil} style={style.image} />
-          </View>
+          </View> */}
         </View>
 
         <View flexDirection={'row'} paddingTop={'tiny'} alignItems={'center'}>
-          <Text variant={'medium12'} color={'grey200'}>
-            Brandzmate.
+          <Text
+            variant={'medium12'}
+            textTransform={'capitalize'}
+            color={'grey200'}
+          >
+            {companyName}.
           </Text>
-          <Text variant={'regular12'} marginLeft={'tiny'} color={'grey200'}>
-            Lahore,punjab pakistan
+          <Text
+            variant={'regular12'}
+            textTransform={'capitalize'}
+            marginLeft={'tiny'}
+            color={'grey200'}
+          >
+            {city}, {country}
           </Text>
-          <Text variant={'regular12'} marginLeft={'tiny'} color={'grey200'}>
+          {/* <Text variant={"regular12"} marginLeft={"tiny"} color={"grey200"}>
             {`(remote)`}
-          </Text>
+          </Text> */}
         </View>
 
         <View paddingTop={'small'}>
           <PressableScale>
             <Text variant={'regular13'} color={'primary'}>
-              2 Applicants
+              {applicants?.length ?? 0} applicants
             </Text>
           </PressableScale>
         </View>
 
         <View paddingTop={'small'}>
-          <AvatarGroup data={avatarGroup} />
+          <AvatarGroup data={applicants} />
         </View>
       </View>
     </PressableScale>
   );
 };
 
-const style = StyleSheet.create({
-  container: {},
-  image: {
-    width: scale(20),
-    height: scale(20),
-  },
-});
+// const style = StyleSheet.create({
+//   container: {},
+//   image: {
+//     width: scale(20),
+//     height: scale(20),
+//   },
+// });
 export default OverviewJob;

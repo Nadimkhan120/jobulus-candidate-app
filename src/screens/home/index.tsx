@@ -1,123 +1,148 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import Animated, {
-  Extrapolation,
-  interpolate,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { scale } from 'react-native-size-matters';
-
-import { PersonItem } from '@/components/person-item';
-//import { useTheme } from "@shopify/restyle";
-import { TopHeader } from '@/components/top-header/header-ios';
-import { palette } from '@/theme';
-import { View } from '@/ui';
-
+import React, { useCallback, useEffect } from 'react';
+import { useTheme } from '@shopify/restyle';
+import { TopHeader } from '@/components/top-header';
+import type { Theme } from '@/theme';
+import { PressableScale, Screen, Text, View } from '@/ui';
 import { HomeSliderContainer } from './home-slider';
-import { SegmentContainer } from './segment-container';
+import { PersonItem } from '@/components/person-item';
+import { FlashList } from '@shopify/flash-list';
+import { useSuggestedJobs, useSaveJob, useUnSaveJob } from '@/services/api/home';
+import { useUser } from '@/store/user';
+import ActivityIndicator from '@/components/activity-indicator';
+import { queryClient } from '@/services/api/api-provider';
+import { useRefreshOnFocus } from '@/hooks';
+import { useNavigation } from '@react-navigation/native';
 
-const HEADER_MAX_HEIGHT = 310;
-const HEADER_MIN_HEIGHT = 100;
-
-const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
-
-const DATA = Array(100)
-  .fill(null)
-  .map((_, idx) => ({
-    id: idx,
-    title: 'John wick',
-    avatar: 'avatar',
-    tags: ['cv', 'cover letter'],
-    appliedFor: 'Frontend designer',
-    appliedOn: '27 Aug 2023',
-  }));
-
-export const Home = () => {
-  // const { colors } = useTheme<Theme>();
-
-  const { top } = useSafeAreaInsets();
-  const translationY = useSharedValue(0);
-
-  const scrollHandler = useAnimatedScrollHandler((event) => {
-    translationY.value = withTiming(event.contentOffset.y);
-  });
-
-  const stylez = useAnimatedStyle(() => {
-    const translate2 = interpolate(
-      translationY.value,
-      [0, HEADER_SCROLL_DISTANCE],
-      [0, -HEADER_SCROLL_DISTANCE],
-      {
-        extrapolateRight: Extrapolation.CLAMP,
-      }
-    );
-
-    return {
-      transform: [
-        {
-          translateY: translate2,
-        },
-      ],
-    };
-  });
+const renderHeader = () => {
+  const { navigate } = useNavigation();
 
   return (
-    <View flex={1} backgroundColor={'white'}>
-      <View style={styles.topHeader}>
-        <TopHeader top={top} />
-      </View>
-      <Animated.View style={[styles.maxHeader, stylez]}>
-        <HomeSliderContainer />
-        <View paddingTop={'large'} alignItems={'center'}>
-          <SegmentContainer
-            onChangeSegment={(index) => {
-              console.log(index);
-            }}
-          />
-        </View>
-      </Animated.View>
-      <Animated.ScrollView
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        bounces={false}
-        style={{
-          marginTop: top,
-        }}
-        contentContainerStyle={{
-          paddingTop: HEADER_MAX_HEIGHT + scale(72) + scale(10),
-          paddingHorizontal: scale(16),
-        }}
+    <View>
+      <HomeSliderContainer />
+      <View
+        paddingHorizontal={'large'}
+        flexDirection={'row'}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+        paddingBottom={'medium'}
       >
-        <View>
-          {DATA?.map((element, index) => {
-            return <PersonItem key={index} {...element} />;
-          })}
-        </View>
-      </Animated.ScrollView>
+        <Text variant={'semiBold16'} color={'black'}>
+          Suggested JObs
+        </Text>
+        <PressableScale
+          onPress={() => {
+            // @ts-ignore
+            navigate('Vacancies');
+          }}
+        >
+          <Text
+            variant={'medium14'}
+            style={{
+              color: '#5386E4',
+            }}
+          >
+            View All
+          </Text>
+        </PressableScale>
+      </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  topHeader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 100,
-  },
-  maxHeader: {
-    position: 'absolute',
-    top: scale(72) + scale(37),
-    left: 0,
-    right: 0,
-    overflow: 'hidden',
-    backgroundColor: palette.white,
-    height: HEADER_MAX_HEIGHT,
-    zIndex: 1,
-  },
-});
+export function Home() {
+  const { colors } = useTheme<Theme>();
+
+  const user = useUser((state) => state?.user);
+  const profile = useUser((state) => state?.profile);
+
+  const { data, isLoading, refetch } = useSuggestedJobs({
+    variables: {
+      person_id: user?.id,
+      unique_id: profile?.unique_id,
+    },
+    enabled: user?.id ? true : false,
+  });
+
+  useRefreshOnFocus(refetch);
+
+  const { mutate: saveJobApi, isLoading: isSaving } = useSaveJob();
+  const { mutate: saveUnJobApi, isLoading: isUnSaving } = useUnSaveJob();
+
+  const renderItem = ({ item }) => {
+    return (
+      <PersonItem
+        data={item}
+        onStartPress={(job) => {
+          if (job?.isSaved === 0) {
+            saveJobApi(
+              { job_id: job?.id, unique_id: profile?.unique_id },
+              {
+                onSuccess: (data) => {
+                  console.log('data', data);
+                  if (data?.response?.status === 200) {
+                    queryClient.invalidateQueries(useSuggestedJobs.getKey());
+                  } else {
+                  }
+                },
+                onError: (error) => {
+                  // An error happened!
+                  console.log(`error`, error);
+                },
+              }
+            );
+          } else {
+            saveUnJobApi(
+              { job_id: job?.id, unique_id: profile?.unique_id },
+              {
+                onSuccess: (data) => {
+                  console.log('data', data);
+
+                  if (data?.response?.status === 200) {
+                    queryClient.invalidateQueries(useSuggestedJobs.getKey());
+                  } else {
+                  }
+                },
+                onError: (error) => {
+                  // An error happened!
+                  console.log(`error`, error);
+                },
+              }
+            );
+          }
+        }}
+      />
+    );
+  };
+
+  const renderLoading = () => {
+    return (
+      <View flex={1} justifyContent={'center'} alignItems={'center'}>
+        <ActivityIndicator size={'large'} />
+      </View>
+    );
+  };
+
+  return (
+    <Screen
+      edges={['top']}
+      backgroundColor={colors.white}
+      statusBarColor={colors.white}
+      barStyle="dark-content"
+    >
+      <TopHeader />
+      {isLoading ? (
+        renderLoading()
+      ) : (
+        <FlashList
+          data={data?.response?.data}
+          ListHeaderComponent={renderHeader}
+          estimatedItemSize={100}
+          renderItem={renderItem}
+          contentContainerStyle={{
+            paddingBottom: 100,
+          }}
+        />
+      )}
+    </Screen>
+  );
+}

@@ -1,25 +1,22 @@
-import React from 'react';
-import { scale } from 'react-native-size-matters';
+import React from "react";
+import { scale } from "react-native-size-matters";
 
-import { ImageButton } from '@/components';
-import { Button, Text, View } from '@/ui';
+import { ImageButton } from "@/components";
+import { Button, Text, View } from "@/ui";
 
-const OverView = () => {
+const OverView = ({ data }: any) => {
   return (
-    <View paddingHorizontal={'large'} flex={1}>
+    <View paddingHorizontal={"large"} flex={1}>
       <View>
-        <Text variant={'medium20'} paddingVertical={'large'} color={'black'}>
+        <Text variant={"medium20"} paddingVertical={"large"} color={"black"}>
           About
         </Text>
-        <Text variant={'regular14'} color={'grey200'}>
-          I live and breathe SaaS! 💕I'm a two-times founder & bootstrapper in
-          SaaS / marketing technology / social media marketing. Angel investor
-          😇 connecting and sharing knowledge & war stories with fellow
-          entrepreneurs (SaaS & beyond) worldwide. 🌍
+        <Text variant={"regular14"} color={"grey200"}>
+          {data}
         </Text>
       </View>
 
-      <View flex={1} justifyContent={'center'}>
+      {/* <View flex={1} justifyContent={'center'}>
         <View
           flexDirection={'row'}
           backgroundColor={'white'}
@@ -45,7 +42,7 @@ const OverView = () => {
             onPress={() => null}
           />
         </View>
-      </View>
+      </View> */}
     </View>
   );
 };

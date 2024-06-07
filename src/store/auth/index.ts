@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { setToken } from "@/storage";
+
+import { removeToken, setToken } from "@/storage";
 
 interface AuthState {
   token: string | null;
@@ -7,6 +8,7 @@ interface AuthState {
   login: (data: string) => void;
   setUserToken: (data: string) => void;
   logOut: () => void;
+  loginFromVerifyCode: () => void;
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -16,12 +18,16 @@ export const useAuth = create<AuthState>((set) => ({
     set({ status: "signIn", token });
     setToken(token);
   },
+  loginFromVerifyCode: () => {
+    set({ status: "signIn" });
+  },
   setUserToken: (token: string) => {
     set({ token });
     setToken(token);
   },
   logOut: () => {
-    set({ status: "signOut" });
+    set({ status: "signOut", token: null });
+    removeToken();
   },
 }));
 
@@ -41,4 +47,8 @@ export const getAuthToken = () => {
 
 export const setUserToken = (data) => {
   return useAuth.getState().setUserToken(data);
+};
+
+export const loginFromVerifyCode = () => {
+  return useAuth.getState().loginFromVerifyCode();
 };

@@ -20,6 +20,8 @@ export const palette = {
   info: '#5386E4',
   warning: '#FFBC42',
   transparent: 'transparent',
+  blue: '#2e57bd',
+  danger: '#D33415',
 };
 
 export const theme = createTheme({
@@ -44,8 +46,10 @@ export const theme = createTheme({
     grey500: palette.grey500,
     error: palette.error,
     info: palette.info,
-    warning: palette.info,
+    warning: palette.warning,
     transparent: 'transparent',
+    blue: palette.blue,
+    danger: palette.danger,
   },
   spacing: {
     tiny: scale(2),
@@ -175,6 +179,11 @@ export const theme = createTheme({
       fontFamily: AppFonts.APP_FONT_SEMI_BOLD,
     },
 
+    semiBold8: {
+      fontSize: 8,
+      fontFamily: AppFonts.APP_FONT_SEMI_BOLD,
+    },
+
     heading: {
       fontSize: 16,
       fontFamily: AppFonts.APP_FONT_BOLD,
@@ -216,6 +225,15 @@ export const theme = createTheme({
       borderWidth: 1,
       borderColor: 'primary',
     },
+    error: {
+      borderRadius: scale(4),
+      height: scale(44),
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: 'error',
+    },
   },
 
   inputVariants: {
@@ -255,5 +273,7 @@ export const darkTheme: Theme = {
     info: palette.info,
     warning: palette.info,
     transparent: 'transparent',
+    blue: palette.blue,
+    danger: palette.danger,
   },
 };

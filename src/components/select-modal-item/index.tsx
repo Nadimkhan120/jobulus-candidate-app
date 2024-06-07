@@ -11,16 +11,13 @@ type SelectModalItemProps = {
   title: string;
   onPress: (data: any) => void;
   icon?: IconTypes;
+  item?: any;
 };
 
-export const SelectModalItem = ({
-  title,
-  icon,
-  onPress,
-}: SelectModalItemProps) => {
+export const SelectModalItem = ({ title, icon, onPress, item }: SelectModalItemProps) => {
   return (
     <Pressable
-      onPress={() => onPress?.(title)}
+      onPress={() => onPress?.(item ? item : title)}
       flexDirection={'row'}
       alignItems={'center'}
       height={scale(37)}
@@ -35,7 +32,7 @@ export const SelectModalItem = ({
       ) : null}
 
       <Text variant={'medium14'} color={'grey200'}>
-        {title}
+        {item ? item?.name : title}
       </Text>
     </Pressable>
   );

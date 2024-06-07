@@ -1,10 +1,13 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import { Screen } from "@/ui";
+import React from "react";
+import { Text, View } from "react-native";
 
 export const AddPost = () => {
   return (
-    <View>
-      <Text>AddPost</Text>
-    </View>
+    <Screen>
+      <View>
+        <Text>AddPost</Text>
+      </View>
+    </Screen>
   );
 };

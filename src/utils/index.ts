@@ -3,6 +3,7 @@ import { formatDistanceStrict } from 'date-fns';
 import * as WebBrowser from 'expo-web-browser';
 import { Linking, Platform } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
+import Toast from 'react-native-toast-message';
 
 import { theme } from '@/theme';
 
@@ -26,11 +27,33 @@ export const showError = (error: AxiosError) => {
 };
 
 export const showErrorMessage = (message: string = 'Something went wrong ') => {
-  showMessage({
-    message,
-    type: 'danger',
-    duration: 4000,
+  // showMessage({
+  //   message,
+  //   type: 'danger',
+  //   duration: 4000,
+  // });
+  Toast.show({
+    type: 'error',
+    // text1: "",
+    text2: message,
+    text2Style:{fontSize:15},
+    bottomOffset:0,
   });
+};
+
+export const showSuccessMessage = (message: string = 'Something went wrong ') => {
+  Toast.show({
+    type: 'success',
+    // text1: "",
+    text2: message,
+    text2Style:{fontSize:15},
+    bottomOffset:0,
+  });
+  // showMessage({
+  //   message,
+  //   type: 'success',
+  //   duration: 4000,
+  // });
 };
 
 export const extractError = (data: unknown): string => {
@@ -50,7 +73,7 @@ export const extractError = (data: unknown): string => {
       const [key, value] = item;
       const separator = Array.isArray(value) ? ':\n ' : ': ';
 
-      return `- ${key}${separator}${extractError(value)} \n `;
+      return `${extractError(value)} \n `;
     });
     return `${messages.join('')} `;
   }
@@ -83,8 +106,6 @@ export function convertMsToTime(milliseconds: number) {
   // or `36:15:31` instead of `12:15:31`, etc.
   hours = hours % 24;
 
-  console.log('hours', hours);
-
   return `${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
 }
 
@@ -115,16 +136,10 @@ export async function openUri(
   const trimmedURI = uri.trim();
   if (
     !isSafeUri &&
-    !ALLOWED_EXTERNAL_URI_SCHEMES.some((scheme) =>
-      trimmedURI.startsWith(scheme)
-    )
+    !ALLOWED_EXTERNAL_URI_SCHEMES.some((scheme) => trimmedURI.startsWith(scheme))
   ) {
     // TODO: [MOB-3925] show a visual warning that the link cannot be opened.
-    console.log(
-      'linking',
-      'openUri',
-      `potentially unsafe URI scheme provided ${uri}`
-    );
+    console.log('linking', 'openUri', `potentially unsafe URI scheme provided ${uri}`);
     return;
   }
 

@@ -40,10 +40,7 @@ export const fontFamily2 = createRestyleFunction({
   },
 });
 
-export type TextProps = Omit<
-  ComponentProps<typeof SText>,
-  'fontSize' | 'fontFamily'
-> & {
+export type TextProps = Omit<ComponentProps<typeof SText>, 'fontSize' | 'fontFamily'> & {
   isTruncated?: boolean;
   /**
    * Text which is looked up via i18n.
@@ -84,7 +81,7 @@ export const Text = (props: TextProps) => {
     isTruncated,
     style,
     fontFamily,
-    color,
+    color = 'black',
     ...rest
   } = props;
   // @ts-ignore

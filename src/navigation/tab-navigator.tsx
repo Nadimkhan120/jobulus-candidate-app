@@ -2,11 +2,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Platform } from 'react-native';
 
 import { AppDrawer } from '@/components/app-drawer';
-import { AddPost, Candidates, Home, Settings, Vacancies } from '@/screens';
-import { Home as Home2 } from '@/screens/home/home2';
+import { Candidates, Home, Settings, Vacancies } from '@/screens';
 
 import { AppBottomTab } from './bottom-tab';
 
@@ -28,6 +26,7 @@ export type TabList<T extends keyof TabParamList> = {
 export const TabNavigator = () => {
   return (
     <AppDrawer>
+      {/* eslint-disable-next-line react/no-unstable-nested-components */}
       <Tab.Navigator tabBar={(props) => <AppBottomTab {...props} />}>
         <Tab.Group
           screenOptions={{
@@ -36,7 +35,7 @@ export const TabNavigator = () => {
         >
           <Tab.Screen
             name={'Home'}
-            component={Platform.OS === 'ios' ? Home : Home2}
+            component={Home}
             options={{
               title: 'Home',
             }}
@@ -45,16 +44,10 @@ export const TabNavigator = () => {
             name={'Vacancies'}
             component={Vacancies}
             options={{
-              title: 'Vacancies',
+              title: 'Jobs',
             }}
           />
-          <Tab.Screen
-            name={'AddPost'}
-            component={AddPost}
-            options={{
-              title: 'Post A Job',
-            }}
-          />
+
           <Tab.Screen
             name={'Candidates'}
             component={Candidates}
@@ -66,7 +59,7 @@ export const TabNavigator = () => {
             name={'Settings'}
             component={Settings}
             options={{
-              title: 'More',
+              title: 'Companies',
             }}
           />
         </Tab.Group>

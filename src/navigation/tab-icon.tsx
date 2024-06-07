@@ -13,10 +13,10 @@ type TabBarIconProps = {
 };
 
 const HOME = 'home';
-const Vacancies = 'vacancies';
+const Vacancies = 'jobs';
 const AddPost = 'post a job';
 const Candidates = 'candidates';
-const Settings = 'more';
+const Settings = 'companies';
 
 // get icon when tab is not focused
 const getIcon = (name) => {
@@ -28,9 +28,9 @@ const getIcon = (name) => {
     case AddPost:
       return 'plus';
     case Candidates:
-      return 'candidates';
+      return 'person-outline';
     case Settings:
-      return 'more';
+      return 'book';
     default:
       break;
   }
@@ -46,9 +46,9 @@ const getIconFocused = (name) => {
     case AddPost:
       return 'new-plus-circle';
     case Candidates:
-      return 'candidates-focused';
+      return 'person-fill';
     case Settings:
-      return 'more-focused';
+      return 'book';
     default:
       break;
   }
