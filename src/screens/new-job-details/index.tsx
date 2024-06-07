@@ -1,32 +1,35 @@
+/* eslint-disable max-lines-per-function */
+import { useRoute } from '@react-navigation/native';
+import { useTheme } from '@shopify/restyle';
+import type { Route } from '@showtime-xyz/tab-view';
+import { TabScrollView, TabView } from '@showtime-xyz/tab-view';
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, useWindowDimensions } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import { scale } from 'react-native-size-matters';
 import { TabBar } from 'react-native-tab-view';
-import { useRoute } from '@react-navigation/native';
-import { useTheme } from '@shopify/restyle';
-import type { Route } from '@showtime-xyz/tab-view';
-import { TabScrollView, TabView } from '@showtime-xyz/tab-view';
+
 import ActivityIndicator from '@/components/activity-indicator';
 import { ScreenHeader } from '@/components/screen-header';
+import { queryClient } from '@/services/api/api-provider';
+import { useAppliedJobs } from '@/services/api/home';
+import { useApplyJob, useJobDetail } from '@/services/api/vacancies';
+import { useUser } from '@/store/user';
 import type { Theme } from '@/theme';
-import OverView from './overview';
+import { PressableScale, Screen, Text, View } from '@/ui';
+import { showErrorMessage, showSuccessMessage } from '@/utils';
+
 import Company from './company';
 import Details from './details';
-import Stats from './stats';
-import { Text, View, Screen, PressableScale } from '@/ui';
 import Header from './header';
-import { useJobDetail, useApplyJob } from '@/services/api/vacancies';
-import { useUser } from '@/store/user';
-import { queryClient } from '@/services/api/api-provider';
-import { showErrorMessage, showSuccessMessage } from '@/utils';
-import { useAppliedJobs } from '@/services/api/home';
+import OverView from './overview';
+import Stats from './stats';
 
 const OverViewTab = ({ route, data }: any) => {
   const user = useUser((state) => state.user);
   const profile = useUser((state) => state.profile);
 
-  const { mutate: applyJobApi, isLoading, error } = useApplyJob();
+  const { mutate: applyJobApi, isLoading } = useApplyJob();
 
   const isApplied =
     data?.applicants?.filter((element) => element?.unique_id === profile?.unique_id)

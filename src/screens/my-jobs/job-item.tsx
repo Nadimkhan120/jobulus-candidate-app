@@ -1,11 +1,9 @@
+import { formatDistanceToNow, parseISO } from 'date-fns';
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { scale } from 'react-native-size-matters';
-import { Image } from 'expo-image';
-import { icons } from '@/assets/icons';
+
 import { Avatar } from '@/components/avatar';
 import { PressableScale, Text, View } from '@/ui';
-import { parseISO, formatDistanceToNow } from 'date-fns';
 
 type JobItemProps = {
   data: any;
@@ -14,7 +12,8 @@ type JobItemProps = {
   onOptionPress: () => void;
 };
 
-const JobItem = ({ data, showStatus, onPress, onOptionPress }: JobItemProps) => {
+// eslint-disable-next-line max-lines-per-function
+const JobItem = ({ data, onPress }: JobItemProps) => {
   // console.log('JobItem', JSON.stringify(data, null, 2));
 
   // Parse the given date string into a Date object
@@ -22,7 +21,6 @@ const JobItem = ({ data, showStatus, onPress, onOptionPress }: JobItemProps) => 
 
   // Calculate the difference between the current time and the parsed date in hours
   // @ts-ignore
-  const hoursDifference = Math.round((new Date() - parsedDate) / (1000 * 60 * 60));
 
   // Format the difference in hours as "X hours ago"
   const formattedDifference = formatDistanceToNow(parsedDate, { addSuffix: true });
@@ -81,11 +79,12 @@ const JobItem = ({ data, showStatus, onPress, onOptionPress }: JobItemProps) => 
             marginVertical={'tiny'}
             color={'black'}
           >
-            {data?.city_name}, {data?.country_name}
+            {data?.city_name ? `${data?.city_name}, ${data?.country_name}` : null}
           </Text>
 
           <View flexDirection={'row'} marginVertical={'tiny'}>
             <View>
+              {/* eslint-disable-next-line react-native/no-inline-styles */}
               <Text variant={'semiBold12'} style={{ color: 'red' }}>
                 {data?.applied_job_status}{' '}
               </Text>
@@ -101,12 +100,5 @@ const JobItem = ({ data, showStatus, onPress, onOptionPress }: JobItemProps) => 
     </PressableScale>
   );
 };
-
-const style = StyleSheet.create({
-  dot: {
-    width: scale(24),
-    height: scale(24),
-  },
-});
 
 export default JobItem;

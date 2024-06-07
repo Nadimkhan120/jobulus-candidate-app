@@ -1,21 +1,43 @@
+import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 
 import {
+  AddCompany,
+  AddEducation,
+  AddExperience,
   AddPaymentCard,
+  AddProcess,
+  AddProfile,
   AddRole,
+  AddStep,
   AddUser,
   ChangePassword,
+  ChatList,
+  Chats,
+  ChooseCompany,
+  ChooseDegree,
+  ChooseDegreeField,
+  ChooseLocation,
+  ChooseSchool,
+  ChooseSkills,
   CompanyDetail,
   EditCompany,
+  EditProfile,
   JdLibrary,
   JdLibraryDetail,
   JobDescription,
   JobPosted,
   LoginAndSecurity,
   MyAccount,
+  MyCompanies,
+  MyContacts,
+  MyJobDetail,
+  MyJobs,
   MyPayments,
+  NewCompanyDetails,
+  NewJobDetails,
+  Notifications,
   PaymentMethods,
   Payments,
   PersonalInformation,
@@ -23,50 +45,29 @@ import {
   PostJobDetail,
   PostJobPayment,
   PostJobPreview,
+  Profile,
+  RecruitmentProcess,
   Roles,
+  Search,
+  Steps,
   Users,
   UserSettings,
-  RecruitmentProcess,
-  AddProcess,
-  Steps,
-  AddStep,
-  AddCompany,
-  MyContacts,
-  MyJobs,
-  MyCompanies,
-  Search,
-  EditProfile,
-  AddProfile,
-  MyJobDetail,
-  ChatList,
-  Chats,
-  AddEducation,
-  AddExperience,
-  ChooseCompany,
-  ChooseSkills,
-  ChooseDegree,
-  Notifications,
-  Profile,
-  ChooseLocation,
-  ChooseDegreeField,
-  ChooseSchool,
-  NewJobDetails,
-  NewCompanyDetails,
 } from '@/screens';
 import Applicants from '@/screens/applicants';
 import CandidateProfile from '@/screens/candidate-profile';
 import { Job } from '@/screens/job';
 import JobDetail from '@/screens/job-detail';
-import { TabNavigator } from './tab-navigator';
 import { SearchResults } from '@/screens/search-results';
+import { useChatLists } from '@/services/api/chats';
 import {
-  getDeviceToken,
+  //getDeviceToken,
   requestNotificationPermission,
   useInAppNotification,
 } from '@/services/notification';
-import { useUser } from '@/store/user';
-import { useChatLists } from '@/services/api/chats';
 import { setUserChatCount } from '@/store/app';
+import { useUser } from '@/store/user';
+
+import { TabNavigator } from './tab-navigator';
 
 export type AppStackParamList = {
   TabNavigator: undefined;
@@ -166,18 +167,15 @@ async function onDisplayNotification(remoteNotification) {
   });
 }
 
+// eslint-disable-next-line max-lines-per-function
 export const AppNavigator = () => {
   const myUser = useUser((state) => state?.user);
 
-  const {
-    data: chatLists,
-    isLoading: loadingChats,
-    refetch,
-  } = useChatLists({
+  const { data: chatLists } = useChatLists({
     variables: {
       person_id: myUser?.id,
     },
-
+    enabled: myUser?.id ? true : false,
     refetchInterval: 5000,
   });
 
@@ -196,9 +194,8 @@ export const AppNavigator = () => {
     let permissionEnabled = requestNotificationPermission();
 
     if (permissionEnabled) {
-      let token = await getDeviceToken();
-
-      //  console.log('token', token);
+      // let token = await getDeviceToken();
+      //   console.log('token', token);
     }
   };
 
@@ -269,7 +266,6 @@ export const AppNavigator = () => {
         <Stack.Screen name="Steps" component={Steps} />
         <Stack.Screen name="AddStep" component={AddStep} />
         <Stack.Screen name="AddCompany" component={AddCompany} />
-
         <Stack.Screen name="MyContacts" component={MyContacts} />
         <Stack.Screen name="MyCompanies" component={MyCompanies} />
         <Stack.Screen name="MyJobs" component={MyJobs} />
@@ -277,7 +273,6 @@ export const AppNavigator = () => {
         <Stack.Screen name="AddProfile" component={AddProfile} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="MyJobDetail" component={MyJobDetail} />
-
         <Stack.Screen name="Chats" component={Chats} />
         <Stack.Screen name="ChatList" component={ChatList} />
         <Stack.Screen name="AddEducation" component={AddEducation} />

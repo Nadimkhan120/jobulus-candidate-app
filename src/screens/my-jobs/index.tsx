@@ -1,11 +1,13 @@
+import { useTheme } from '@shopify/restyle';
 import React from 'react';
 import { StyleSheet, useWindowDimensions } from 'react-native';
 import { scale } from 'react-native-size-matters';
-import { useTheme } from '@shopify/restyle';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
+
+import { ScreenHeader } from '@/components/screen-header';
 import type { Theme } from '@/theme';
 import { Screen, Text, View } from '@/ui';
-import { ScreenHeader } from '@/components/screen-header';
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+
 import Applied from './applied';
 import Saved from './saved';
 
@@ -45,6 +47,7 @@ const renderTabBar = (props: any) => {
         indicatorStyle={[styles.indicatorStyle]}
         scrollEnabled={true}
         renderLabel={renderLabel}
+        // eslint-disable-next-line react-native/no-inline-styles
         tabStyle={{ width: 120 }}
       />
       <View height={scale(4)} backgroundColor={'grey500'} />

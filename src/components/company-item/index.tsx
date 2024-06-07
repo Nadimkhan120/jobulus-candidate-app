@@ -1,10 +1,11 @@
-import React from 'react';
-import { View, Text, PressableScale } from '@/ui';
-import { scale } from 'react-native-size-matters';
-import { Image } from 'expo-image';
-import { icons } from '@/assets/icons';
 import { useNavigation } from '@react-navigation/native';
+import { Image } from 'expo-image';
+import React from 'react';
 import { Pressable } from 'react-native';
+import { scale } from 'react-native-size-matters';
+
+import { icons } from '@/assets/icons';
+import { PressableScale, Text, View } from '@/ui';
 
 type CompanyItemProps = {
   data: any;
@@ -13,11 +14,13 @@ type CompanyItemProps = {
   onMessage?: (data: any) => void;
 };
 
+// eslint-disable-next-line max-lines-per-function
 const CompanyItem = ({ data, onFollow, onSavePress, onMessage }: CompanyItemProps) => {
   const { navigate } = useNavigation();
 
   return (
     <Pressable
+      // eslint-disable-next-line react-native/no-inline-styles
       style={{ flex: 1 }}
       onPress={() => navigate('NewCompanyDetails', { id: data?.id })}
     >
@@ -41,7 +44,7 @@ const CompanyItem = ({ data, onFollow, onSavePress, onMessage }: CompanyItemProp
         </View>
         <PressableScale>
           <Image
-            source={data?.images?.pic ? data?.images?.pic : icons['company']}
+            source={data?.images?.pic ? data?.images?.pic : icons.company}
             style={{
               height: scale(48),
               width: scale(48),
@@ -51,7 +54,13 @@ const CompanyItem = ({ data, onFollow, onSavePress, onMessage }: CompanyItemProp
             contentFit="contain"
           />
         </PressableScale>
-        <Text variant={'semiBold14'} color={'black'} marginTop={'small'}>
+        <Text
+          variant={'semiBold14'}
+          textAlign={'center'}
+          color={'black'}
+          marginTop={'small'}
+          height={44}
+        >
           {data?.name}
         </Text>
         <Text
@@ -60,6 +69,7 @@ const CompanyItem = ({ data, onFollow, onSavePress, onMessage }: CompanyItemProp
           color={'grey300'}
           marginTop={'tiny'}
           textAlign={'center'}
+          height={44}
         >
           {data?.city_name}, {data?.country_name}
         </Text>

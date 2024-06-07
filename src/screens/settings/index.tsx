@@ -1,28 +1,31 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { StyleSheet, useWindowDimensions } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { scale } from 'react-native-size-matters';
+/* eslint-disable react-hooks/exhaustive-deps */
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { BottomSheetFooter, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@shopify/restyle';
-import ActivityIndicator from '@/components/activity-indicator';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { StyleSheet, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { scale } from 'react-native-size-matters';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
+
 import { BottomModal } from '@/components/bottom-modal';
 import SelectionBox from '@/components/drop-down';
 import { SearchWithFilter } from '@/components/search-with-filter';
+import { useDebounce } from '@/hooks';
 import {
   useAllCandidates,
   useCandidateByName,
   useFilterCandidates,
 } from '@/services/api/candidate';
+import { useIndustries, useSkills } from '@/services/api/settings';
 import type { Theme } from '@/theme';
 import { Button, Screen, Text, View } from '@/ui';
-import { useIndustries, useSkills } from '@/services/api/settings';
-import { useDebounce } from '@/hooks';
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+
 import Explore from './explore';
 import Follow from './followed';
 import Saved from './saved';
+import { BottomSheetDefaultFooterProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetFooter/types';
 
 const FirstRoute = () => <Explore />;
 const SecondRoute = () => <Follow />;
@@ -80,18 +83,18 @@ export const Settings = () => {
 
   const debouncedSearch = useDebounce<string>(searchQuery, 300);
 
-  const { data, isLoading } = useAllCandidates();
+  useAllCandidates();
   const { data: industries } = useIndustries();
   const { data: skills } = useSkills();
 
-  const { data: seachData } = useCandidateByName({
+  useCandidateByName({
     enabled: debouncedSearch?.length ? true : false,
     variables: {
       search: debouncedSearch,
     },
   });
 
-  const { data: filterData } = useFilterCandidates({
+  useFilterCandidates({
     enabled: showFilter ? true : false,
     variables: {
       skill: skill,
@@ -125,7 +128,7 @@ export const Settings = () => {
 
   // render footer
   const renderFooter = useCallback(
-    (props) => (
+    (props: React.JSX.IntrinsicAttributes & BottomSheetDefaultFooterProps) => (
       <BottomSheetFooter {...props} bottomInset={bottom}>
         <View paddingVertical={'large'} borderTopWidth={1} borderTopColor={'grey400'}>
           <Button
@@ -173,43 +176,6 @@ export const Settings = () => {
         initialLayout={{ width: layout.width }}
         renderTabBar={renderTabBar}
       />
-
-      {/* {isLoading ? (
-        <View
-          flex={1}
-          height={scale(300)}
-          justifyContent={'center'}
-          alignItems={'center'}
-        >
-          <ActivityIndicator size={'large'} />
-        </View>
-      ) : (
-        <View flex={1} backgroundColor={'white'} paddingTop={'large'}>
-          <FlashList
-            data={
-              showFilter
-                ? filterData?.response?.data
-                : debouncedSearch
-                ? seachData?.response?.data
-                : data?.response?.data
-            }
-            renderItem={renderItem}
-            estimatedItemSize={150}
-            contentContainerStyle={{
-              paddingBottom: scale(100),
-            }}
-            ListEmptyComponent={
-              <View
-                height={scale(300)}
-                justifyContent={'center'}
-                alignItems={'center'}
-              >
-                <Text>No Cadidates Found</Text>
-              </View>
-            }
-          />
-        </View>
-      )} */}
 
       <BottomModal
         ref={bottomSheetModalRef}

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text } from '@/ui';
+
+import { Text, View } from '@/ui';
 
 type DetailsProps = {
   data: any;
@@ -29,10 +30,14 @@ const InfoRow = ({ label, value, isGrey = true }) => {
 const Details = ({ data }: DetailsProps) => {
   return (
     <View>
-      <InfoRow label={'Sallary'} value={data?.salary_max} isGrey={true} />
+      <InfoRow label={'Salary'} value={data?.salary_max} isGrey={true} />
       <InfoRow label={'Job Type'} value={data?.job_type} isGrey={true} />
       <InfoRow label={'Onsite/Remote'} value={'Onsite'} isGrey={true} />
-      <InfoRow label={'Experience Level'} value={data?.experience_levels[0]?.experience_level} isGrey={true} />
+      <InfoRow
+        label={'Experience Level'}
+        value={data?.experience_levels[0]?.experience_level}
+        isGrey={true}
+      />
       <InfoRow label={'Time Posted'} value={data?.created_at} isGrey={true} />
     </View>
   );

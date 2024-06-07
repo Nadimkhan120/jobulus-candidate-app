@@ -118,7 +118,7 @@ export const EditProfile = () => {
     if (profileData) {
       setValue('name', profileData?.full_name);
       setValue('jobTitle', profileData?.job_titles);
-      setValue('salary', profileData?.expected_salary);
+      setValue('salary', profileData?.expected_salary?.toString());
       setValue('email', profileData?.contact?.email);
       setValue('cover', profileData?.resume_bio);
 

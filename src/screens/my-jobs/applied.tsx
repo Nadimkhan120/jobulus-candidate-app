@@ -1,13 +1,15 @@
-import React, { useCallback } from 'react';
-import { FlashList } from '@shopify/flash-list';
-import { View, Text } from '@/ui';
-import { StyleSheet } from 'react-native';
-import JobItem from './job-item';
 import { useNavigation } from '@react-navigation/native';
+import { FlashList } from '@shopify/flash-list';
+import React, { useCallback } from 'react';
+import { StyleSheet } from 'react-native';
+import { scale } from 'react-native-size-matters';
+
+import ActivityIndicator from '@/components/activity-indicator';
 import { useAppliedJobs } from '@/services/api/home';
 import { useUser } from '@/store/user';
-import ActivityIndicator from '@/components/activity-indicator';
-import { scale } from 'react-native-size-matters';
+import { Text, View } from '@/ui';
+
+import JobItem from './job-item';
 
 const Applied = () => {
   const { navigate } = useNavigation();
@@ -32,7 +34,7 @@ const Applied = () => {
         />
       );
     },
-    [user]
+    [navigate]
   );
 
   if (isLoading) {

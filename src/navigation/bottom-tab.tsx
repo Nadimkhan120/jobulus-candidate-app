@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { Text } from '@/ui';
+
 import TabBarIcon from './tab-icon';
 
 export function AppBottomTab({ state, descriptors, navigation }: any) {

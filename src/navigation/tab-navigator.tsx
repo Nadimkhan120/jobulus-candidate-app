@@ -4,7 +4,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
 
 import { AppDrawer } from '@/components/app-drawer';
-import { AddPost, Candidates, Home, Settings, Vacancies } from '@/screens';
+import { Candidates, Home, Settings, Vacancies } from '@/screens';
 
 import { AppBottomTab } from './bottom-tab';
 
@@ -26,6 +26,7 @@ export type TabList<T extends keyof TabParamList> = {
 export const TabNavigator = () => {
   return (
     <AppDrawer>
+      {/* eslint-disable-next-line react/no-unstable-nested-components */}
       <Tab.Navigator tabBar={(props) => <AppBottomTab {...props} />}>
         <Tab.Group
           screenOptions={{
@@ -46,13 +47,7 @@ export const TabNavigator = () => {
               title: 'Jobs',
             }}
           />
-          {/* <Tab.Screen
-            name={'AddPost'}
-            component={AddPost}
-            options={{
-              title: 'Post A Job',
-            }}
-          /> */}
+
           <Tab.Screen
             name={'Candidates'}
             component={Candidates}

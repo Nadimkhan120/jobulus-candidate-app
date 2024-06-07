@@ -1,22 +1,23 @@
-import React, { useCallback } from 'react';
 import { FlashList } from '@shopify/flash-list';
-import CompanyItem from '@/components/company-item';
-import { View, Text } from '@/ui';
-import {
-  useCompaniesList,
-  useSaveCompany,
-  useUnsaveSaveCompany,
-  useAddContactCompany,
-  useFollowedCompanies,
-  useSavedCompanies,
-} from '@/services/api/company';
-import ActivityIndicator from '@/components/activity-indicator';
-import { useUser } from '@/store/user';
-import { queryClient } from '@/services/api/api-provider';
+import React, { useCallback } from 'react';
 import { scale } from 'react-native-size-matters';
 
+import ActivityIndicator from '@/components/activity-indicator';
+import CompanyItem from '@/components/company-item';
+import { queryClient } from '@/services/api/api-provider';
+import {
+  useAddContactCompany,
+  useCompaniesList,
+  useFollowedCompanies,
+  useSaveCompany,
+  useSavedCompanies,
+  useUnsaveSaveCompany,
+} from '@/services/api/company';
+import { useUser } from '@/store/user';
+import { Text, View } from '@/ui';
+
+// eslint-disable-next-line max-lines-per-function
 const Saved = () => {
-  const user = useUser((state) => state?.user);
   const profile = useUser((state) => state?.profile);
 
   const { isLoading, data } = useSavedCompanies({
@@ -25,13 +26,12 @@ const Saved = () => {
     },
   });
 
-  console.log('useSavedCompanies', JSON.stringify(data, null, 2));
-
-  const { mutate: saveCompanyApi, isLoading: isSaving } = useSaveCompany();
-  const { mutate: unSaveCompanyApi, isLoading: isUnSaving } = useUnsaveSaveCompany();
-  const { mutate: followCompmayApi, isLoading: isFollowing } = useAddContactCompany();
+  const { mutate: saveCompanyApi } = useSaveCompany();
+  const { mutate: unSaveCompanyApi } = useUnsaveSaveCompany();
+  const { mutate: followCompmayApi } = useAddContactCompany();
 
   const renderItem = useCallback(
+    // eslint-disable-next-line max-lines-per-function
     ({ item }) => {
       return (
         <CompanyItem
@@ -43,9 +43,8 @@ const Saved = () => {
               followCompmayApi(
                 { company_id: company?.id, person_id: 0, emails: company?.email },
                 {
+                  // eslint-disable-next-line @typescript-eslint/no-shadow
                   onSuccess: (data) => {
-                    console.log('data', data);
-
                     if (data?.response?.status === 200) {
                       queryClient.invalidateQueries(useCompaniesList.getKey());
                       queryClient.invalidateQueries(useFollowedCompanies.getKey());
@@ -62,15 +61,12 @@ const Saved = () => {
             }
           }}
           onSavePress={(company) => {
-            console.log('company', JSON.stringify(company?.is_saved, null, 2));
-
             if (company?.is_saved === 0) {
               saveCompanyApi(
                 { company_id: company?.id, unique_id: profile?.unique_id },
                 {
+                  // eslint-disable-next-line @typescript-eslint/no-shadow
                   onSuccess: (data) => {
-                    console.log('saveCompanyApi', data);
-
                     if (data?.response?.status === 200) {
                       queryClient.invalidateQueries(useCompaniesList.getKey());
                       queryClient.invalidateQueries(useFollowedCompanies.getKey());
@@ -88,6 +84,7 @@ const Saved = () => {
               unSaveCompanyApi(
                 { company_id: company?.id, unique_id: profile?.unique_id },
                 {
+                  // eslint-disable-next-line @typescript-eslint/no-shadow
                   onSuccess: (data) => {
                     console.log('data', data);
 
@@ -109,7 +106,7 @@ const Saved = () => {
         />
       );
     },
-    [user, profile]
+    [followCompmayApi, saveCompanyApi, profile?.unique_id, unSaveCompanyApi]
   );
 
   const renderLoading = () => {
@@ -130,6 +127,7 @@ const Saved = () => {
           numColumns={2}
           estimatedItemSize={100}
           renderItem={renderItem}
+          // eslint-disable-next-line react-native/no-inline-styles
           contentContainerStyle={{
             paddingTop: 20,
             paddingBottom: 100,
